@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { Product, Page } from '../types';
 import { Icon } from '../components/Icon';
 import { generateSocialPost } from '../services/geminiService';
 import { useCart } from '../hooks/useCart';
+import { useShare } from '../hooks/useShare';
 
 interface ProductPageProps {
     product: Product;
@@ -13,7 +13,9 @@ interface ProductPageProps {
 const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
     const [socialPost, setSocialPost] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
+    const [showCopySuccess, setShowCopySuccess] = useState(false);
     const { addToCart } = useCart();
+    const { openShareModal } = useShare();
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -27,21 +29,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
     const whatsappMessage = `Halo Kriuké Snack, saya tertarik untuk memesan produk ${product.name}.`;
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`;
 
-    const handleShare = async () => {
-        const shareData = {
-            title: `Kriuké Snack - ${product.name}`,
-            text: socialPost || `Cek kripik pisang enak ini: ${product.name} dari Kriuké Snack!`,
-            url: window.location.href,
-        };
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                alert('Fitur share tidak didukung di browser ini.');
-            }
-        } catch (error) {
-            console.error('Error sharing:', error);
-        }
+    const handleShare = () => {
+        openShareModal(product);
     };
 
     const handleGenerateSocialPost = async () => {
@@ -49,6 +38,18 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
         const post = await generateSocialPost(product.name);
         setSocialPost(post);
         setIsGenerating(false);
+    };
+
+    const handleCopy = () => {
+        if (!socialPost) return;
+        const textToCopy = `${socialPost}\n\nYuk, beli di sini: ${window.location.origin}/?product=${product.id}`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            setShowCopySuccess(true);
+            setTimeout(() => setShowCopySuccess(false), 2500);
+        }, (err) => {
+            console.error('Could not copy text: ', err);
+            alert('Gagal menyalin teks.');
+        });
     };
 
     const ecommercePlatforms = [
@@ -95,9 +96,16 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
                            <Icon name="sparkles" /> {isGenerating ? 'Membuat Teks...' : 'Buat Teks Share (AI)'}
                         </button>
                          {socialPost && (
-                             <div className="p-3 bg-gray-100 rounded-lg text-sm text-gray-700">
-                                 {socialPost}
-                             </div>
+                             <div className="relative p-4 pr-12 bg-gray-100 rounded-lg text-sm text-gray-700 border border-gray-200">
+                                <pre className="whitespace-pre-wrap font-sans break-words">{socialPost}</pre>
+                                <button 
+                                    onClick={handleCopy}
+                                    className="absolute top-2 right-2 p-2 bg-white rounded-full text-gray-600 hover:bg-gray-200 active:bg-gray-300 transition-colors"
+                                    aria-label="Salin teks"
+                                >
+                                    <Icon name="copy" className="w-5 h-5" />
+                                </button>
+                            </div>
                          )}
                     </div>
                 </div>
@@ -128,6 +136,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
                     </a>
                 </div>
             </div>
+            {showCopySuccess && (
+                <div className="fixed bottom-32 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-4 py-2 rounded-full text-sm shadow-lg z-50 animate-fade-in-out">
+                    Teks promosi berhasil disalin!
+                </div>
+            )}
         </div>
     );
 };

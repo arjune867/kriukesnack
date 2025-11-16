@@ -25,9 +25,16 @@ export const generateDescription = async (productName: string, keywords: string)
 
 export const generateSocialPost = async (productName: string): Promise<string> => {
     try {
-        const prompt = `Create a short and catchy social media post in Indonesian to promote a banana chip product called "Kriuké Snack - ${productName}". 
-        Make it fun and engaging. 
-        Include relevant hashtags like #KriukeSnack #KripikPisang #CemilanEnak #SnackLokal.`;
+        const prompt = `Buatkan satu teks promosi yang menarik dan SEO-friendly untuk media sosial dalam Bahasa Indonesia.
+Produk: Kriuké Snack - ${productName}.
+Gaya: Ceria, singkat, dan persuasif. Gunakan kata kunci seperti "keripik pisang", "cemilan renyah", dan nama produk secara alami.
+Struktur:
+1. Kalimat pembuka yang menarik perhatian.
+2. Keunggulan utama produk (contoh: rasa, kerenyahan).
+3. Ajakan untuk membeli (Call to Action).
+4. Wajib sertakan hashtag relevan: #KriukeSnack #${productName.replace(/\s+/g, '')} #KripikPisang #CemilanEnak #SnackLokal.
+
+Langsung berikan teks promosinya saja, tanpa judul atau embel-embel "opsi".`;
         
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',

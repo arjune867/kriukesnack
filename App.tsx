@@ -1,10 +1,11 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { ProductProvider, useProducts } from './hooks/useProducts';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { CartProvider } from './hooks/useCart';
 import { WishlistProvider } from './hooks/useWishlist';
 import { PromotionProvider } from './hooks/usePromotions';
 import { CategoryProvider } from './hooks/useCategories';
+import { ShareProvider } from './hooks/useShare';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -41,6 +42,17 @@ const AppContent: React.FC = () => {
         }
         window.scrollTo(0, 0);
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const productId = params.get('product');
+        if (productId && products.length > 0 && products.some(p => p.id === productId)) {
+            // A small timeout to allow products to be fully loaded into context
+            // before attempting navigation, preventing race conditions.
+            setTimeout(() => navigate('product', productId), 100);
+        }
+    }, [products, navigate]);
+
 
     const handleUserFoundForReset = (username: string) => {
         setUsernameForReset(username);
@@ -130,7 +142,9 @@ const App: React.FC = () => {
                     <CategoryProvider>
                         <CartProvider>
                             <WishlistProvider>
-                                <AppContent />
+                                <ShareProvider>
+                                    <AppContent />
+                                </ShareProvider>
                             </WishlistProvider>
                         </CartProvider>
                     </CategoryProvider>

@@ -9,6 +9,8 @@ interface RegisterPageProps {
 
 const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
     const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +31,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
             return;
         }
 
-        const result = register(username, password);
+        const result = register(username, password, email, whatsapp);
         if (result.success) {
             alert(result.message);
             navigate('login');
@@ -42,7 +44,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <div className="rounded-md shadow-sm">
+                    <div className="rounded-md shadow-sm -space-y-px">
                         <div>
                             <label htmlFor="username-register" className="sr-only">Username</label>
                             <input
@@ -54,6 +56,32 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                                 onChange={(e) => setUsername(e.target.value)}
                                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
                                 placeholder="Username"
+                            />
+                        </div>
+                         <div>
+                            <label htmlFor="email-register" className="sr-only">Email</label>
+                            <input
+                                id="email-register"
+                                name="email"
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
+                                placeholder="Email"
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="whatsapp-register" className="sr-only">Nomor WhatsApp</label>
+                            <input
+                                id="whatsapp-register"
+                                name="whatsapp"
+                                type="tel"
+                                required
+                                value={whatsapp}
+                                onChange={(e) => setWhatsapp(e.target.value)}
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
+                                placeholder="Nomor WhatsApp"
                             />
                         </div>
                         <div className="relative">

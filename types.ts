@@ -33,6 +33,8 @@ export interface Admin {
 export interface User {
     username: string;
     password: string; // In a real app, this would be a hash
+    email?: string;
+    whatsapp?: string;
 }
 
 export type Page = 'home' | 'product' | 'admin' | 'cart' | 'wishlist' | 'profile' | 'login' | 'register' | 'forgotPassword' | 'resetPassword';

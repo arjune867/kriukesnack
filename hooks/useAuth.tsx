@@ -7,7 +7,7 @@ interface AuthContextType {
     adminLogin: (user: string, pass: string) => boolean;
     login: (user: string, pass: string) => boolean;
     logout: () => void;
-    register: (user: string, pass: string) => { success: boolean, message: string };
+    register: (username: string, pass: string, email: string, whatsapp: string) => { success: boolean, message: string };
     findUserByUsername: (username: string) => User | undefined;
     updatePassword: (username: string, newPass: string) => { success: boolean, message: string };
 }
@@ -74,11 +74,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return false;
     };
 
-    const register = (username: string, pass: string) => {
+    const register = (username: string, pass: string, email: string, whatsapp: string) => {
         if (users.some(u => u.username === username)) {
             return { success: false, message: 'Username sudah digunakan.' };
         }
-        const newUser: User = { username, password: pass };
+        const newUser: User = { username, password: pass, email, whatsapp };
         persistUsers([...users, newUser]);
         return { success: true, message: 'Registrasi berhasil!' };
     };

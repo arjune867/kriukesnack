@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Product } from '../types';
 import { Icon } from './Icon';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
+import { useShare } from '../hooks/useShare';
 
 interface ProductCardProps {
     product: Product;
@@ -33,6 +33,7 @@ const StarRating: React.FC<{ rating: number; reviewCount: number }> = ({ rating,
 const ProductCard: React.FC<ProductCardProps> = ({ product, onCardClick }) => {
     const { addToCart } = useCart();
     const { toggleWishlist, isProductInWishlist } = useWishlist();
+    const { openShareModal } = useShare();
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -52,22 +53,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onCardClick }) => {
         toggleWishlist(product.id);
     };
     
-    const handleShare = async (e: React.MouseEvent) => {
+    const handleShare = (e: React.MouseEvent) => {
         e.stopPropagation();
-        const shareData = {
-            title: `Kriuké Snack - ${product.name}`,
-            text: `Cek kripik pisang enak ini: ${product.name} dari Kriuké Snack!`,
-            url: window.location.href,
-        };
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                alert('Fitur share tidak didukung di browser ini.');
-            }
-        } catch (error) {
-            console.error('Error sharing:', error);
-        }
+        openShareModal(product);
     };
 
     const inWishlist = isProductInWishlist(product.id);
