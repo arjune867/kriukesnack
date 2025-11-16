@@ -153,8 +153,16 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
             </div>
             <div className="p-4">
                 <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
-                <div className="mt-2">
+                <div className="mt-2 flex items-center gap-4 text-sm">
                    <StarRatingDisplay rating={product.rating} reviewCount={product.reviewCount} />
+                   {typeof product.soldCount === 'number' && product.soldCount > 0 && (
+                        <>
+                            <div className="h-4 w-px bg-gray-300"></div>
+                            <div className="text-gray-600">
+                                <span className="font-semibold">{product.soldCount}</span> terjual
+                            </div>
+                        </>
+                   )}
                 </div>
                 <div className="flex items-baseline gap-3 mt-2">
                     <p className="text-3xl font-extrabold text-amber-500">{formatCurrency(product.discountedPrice ?? product.price)}</p>
