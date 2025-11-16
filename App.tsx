@@ -7,6 +7,7 @@ import { PromotionProvider } from './hooks/usePromotions';
 import { CategoryProvider } from './hooks/useCategories';
 import { ShareProvider } from './hooks/useShare';
 import { DiscountProvider } from './hooks/useDiscounts';
+import { ReviewProvider } from './hooks/useReviews';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -23,6 +24,7 @@ import Header from './components/Header';
 import { Page, Product } from './types';
 import VirtualAssistant from './components/VirtualAssistant';
 import { Icon } from './components/Icon';
+import SideMenu from './components/SideMenu';
 
 const AppContent: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -30,6 +32,7 @@ const AppContent: React.FC = () => {
     const [usernameForReset, setUsernameForReset] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isAssistantVisible, setIsAssistantVisible] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { products } = useProducts();
     const { admin } = useAuth();
 
@@ -42,6 +45,7 @@ const AppContent: React.FC = () => {
             setUsernameForReset(null);
         }
         window.scrollTo(0, 0);
+        setIsMenuOpen(false); // Close menu on navigation
     }, []);
 
     useEffect(() => {
@@ -110,6 +114,12 @@ const AppContent: React.FC = () => {
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
                 productName={selectedProduct?.name}
+                onMenuClick={() => setIsMenuOpen(true)}
+            />
+             <SideMenu 
+                isOpen={isMenuOpen} 
+                onClose={() => setIsMenuOpen(false)}
+                navigate={navigate}
             />
             <main className={`flex-grow ${mainPaddingTop} ${showFooter ? 'pb-16' : 'pb-4'}`}>
                 {renderPage()}
@@ -138,21 +148,23 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
     return (
         <AuthProvider>
-            <ProductProvider>
-                <PromotionProvider>
-                    <CategoryProvider>
-                        <DiscountProvider>
-                            <CartProvider>
-                                <WishlistProvider>
-                                    <ShareProvider>
-                                        <AppContent />
-                                    </ShareProvider>
-                                </WishlistProvider>
-                            </CartProvider>
-                        </DiscountProvider>
-                    </CategoryProvider>
-                </PromotionProvider>
-            </ProductProvider>
+            <ReviewProvider>
+                <ProductProvider>
+                    <PromotionProvider>
+                        <CategoryProvider>
+                            <DiscountProvider>
+                                <CartProvider>
+                                    <WishlistProvider>
+                                        <ShareProvider>
+                                            <AppContent />
+                                        </ShareProvider>
+                                    </WishlistProvider>
+                                </CartProvider>
+                            </DiscountProvider>
+                        </CategoryProvider>
+                    </PromotionProvider>
+                </ProductProvider>
+            </ReviewProvider>
         </AuthProvider>
     );
 };

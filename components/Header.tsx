@@ -10,6 +10,7 @@ interface HeaderProps {
     searchTerm?: string;
     setSearchTerm?: (term: string) => void;
     productName?: string;
+    onMenuClick: () => void;
 }
 
 const Logo: React.FC = () => (
@@ -19,7 +20,7 @@ const Logo: React.FC = () => (
 );
 
 
-const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setSearchTerm, productName }) => {
+const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setSearchTerm, productName, onMenuClick }) => {
     const { itemCount } = useCart();
     const { admin } = useAuth();
     
@@ -99,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setS
                             </span>
                         )}
                     </button>
-                    <button>
+                    <button onClick={onMenuClick}>
                         <Icon name="menu" />
                     </button>
                 </div>

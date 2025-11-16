@@ -1,7 +1,8 @@
 
-import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import { Product } from '../types';
 import { MOCK_PRODUCTS } from '../data/mockData';
+import { useReviews } from './useReviews';
 
 interface ProductsContextType {
     products: Product[];
@@ -15,6 +16,7 @@ const ProductsContext = createContext<ProductsContextType | undefined>(undefined
 
 export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [products, setProducts] = useState<Product[]>([]);
+    const { reviews } = useReviews();
 
     useEffect(() => {
         try {
@@ -30,6 +32,29 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
             setProducts(MOCK_PRODUCTS);
         }
     }, []);
+
+    const productsWithReviews = useMemo(() => {
+        if (!products.length) {
+            return [];
+        }
+
+        return products.map(product => {
+            const productReviews = reviews.filter(r => r.productId === product.id);
+            if (productReviews.length === 0) {
+                // Keep mock rating if there are no real reviews yet
+                return product;
+            }
+
+            const totalRating = productReviews.reduce((acc, review) => acc + review.rating, 0);
+            const averageRating = totalRating / productReviews.length;
+            
+            return {
+                ...product,
+                rating: parseFloat(averageRating.toFixed(1)),
+                reviewCount: productReviews.length,
+            };
+        });
+    }, [products, reviews]);
 
     const persistProducts = (newProducts: Product[]) => {
         localStorage.setItem('kriuke_products', JSON.stringify(newProducts));
@@ -58,10 +83,10 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     }, [products]);
     
     const getProductById = useCallback((productId: string) => {
-        return products.find(p => p.id === productId);
-    }, [products]);
+        return productsWithReviews.find(p => p.id === productId);
+    }, [productsWithReviews]);
 
-    const value = { products, addProduct, updateProduct, deleteProduct, getProductById };
+    const value = { products: productsWithReviews, addProduct, updateProduct, deleteProduct, getProductById };
 
     return <ProductsContext.Provider value={value}>{children}</ProductsContext.Provider>;
 };

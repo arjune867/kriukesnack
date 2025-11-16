@@ -79,9 +79,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onCardClick }) => {
                 </button>
             </div>
             <div className="p-3 flex-grow flex flex-col">
-                <p className="text-xs text-gray-500">{product.category}</p>
-                <h3 className="text-sm font-semibold text-gray-800 mt-1 leading-tight">{product.name}</h3>
+                <h3 className="text-sm font-semibold text-gray-800 leading-tight">{product.name}</h3>
                 <StarRating rating={product.rating} reviewCount={product.reviewCount} />
+                <p className="text-xs text-gray-500 mt-1">{product.category}</p>
                 <div className="flex-grow" />
                 <p className="text-base font-bold text-orange-500 mt-2">{formatCurrency(product.price)}</p>
                 <div className="flex items-center justify-between mt-3 gap-2">

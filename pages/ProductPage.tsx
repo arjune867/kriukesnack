@@ -1,14 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Product, Page } from '../types';
 import { Icon } from '../components/Icon';
 import { generateSocialPost } from '../services/geminiService';
 import { useCart } from '../hooks/useCart';
 import { useShare } from '../hooks/useShare';
+import { useReviews } from '../hooks/useReviews';
+import { useAuth } from '../hooks/useAuth';
+import StarRatingInput from '../components/StarRatingInput';
 
 interface ProductPageProps {
     product: Product;
     navigate: (page: Page) => void;
 }
+
+const StarRatingDisplay: React.FC<{ rating: number; reviewCount: number; size?: 'sm' | 'md' }> = ({ rating, reviewCount, size = 'md' }) => {
+    const sizeClasses = {
+        sm: 'w-4 h-4',
+        md: 'w-5 h-5',
+    }
+    return (
+        <div className="flex items-center gap-2">
+            <div className="flex items-center">
+                {[...Array(5)].map((_, i) => (
+                    <Icon
+                        key={i}
+                        name="star"
+                        className={`${sizeClasses[size]} ${i < Math.round(rating) ? 'text-amber-400' : 'text-gray-300'}`}
+                        isSolid={true}
+                    />
+                ))}
+            </div>
+            {reviewCount > 0 && (
+                <>
+                    <span className="font-bold text-gray-800">{rating.toFixed(1)}</span>
+                    <span className="text-sm text-gray-500">({reviewCount} ulasan)</span>
+                </>
+            )}
+        </div>
+    );
+};
+
+const Stars: React.FC<{ rating: number; size?: 'sm' | 'md' }> = ({ rating, size = 'sm' }) => {
+     const sizeClasses = {
+        sm: 'w-4 h-4',
+        md: 'w-5 h-5',
+    }
+    return (
+        <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+                <Icon
+                    key={i}
+                    name="star"
+                    className={`${sizeClasses[size]} ${i < Math.round(rating) ? 'text-amber-400' : 'text-gray-300'}`}
+                    isSolid={true}
+                />
+            ))}
+        </div>
+    );
+};
 
 const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
     const [socialPost, setSocialPost] = useState('');
@@ -16,6 +65,43 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
     const [showCopySuccess, setShowCopySuccess] = useState(false);
     const { addToCart } = useCart();
     const { openShareModal } = useShare();
+    const { getReviewsByProductId, addReview } = useReviews();
+    const { currentUser } = useAuth();
+    
+    const [newRating, setNewRating] = useState(0);
+    const [newComment, setNewComment] = useState('');
+    const [newAuthor, setNewAuthor] = useState(currentUser?.username || '');
+    const [reviewError, setReviewError] = useState('');
+
+    const productReviews = useMemo(() => getReviewsByProductId(product.id), [getReviewsByProductId, product.id]);
+
+    const handleReviewSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (newRating === 0) {
+            setReviewError('Rating bintang tidak boleh kosong.');
+            return;
+        }
+        if (!newComment.trim()) {
+            setReviewError('Komentar tidak boleh kosong.');
+            return;
+        }
+        if (!newAuthor.trim()) {
+            setReviewError('Nama tidak boleh kosong.');
+            return;
+        }
+        setReviewError('');
+        addReview({
+            productId: product.id,
+            author: newAuthor,
+            rating: newRating,
+            comment: newComment,
+        });
+        setNewRating(0);
+        setNewComment('');
+        if (!currentUser) {
+            setNewAuthor('');
+        }
+    };
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -67,6 +153,9 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
             </div>
             <div className="p-4">
                 <h1 className="text-2xl font-bold text-gray-900">{product.name}</h1>
+                <div className="mt-2">
+                   <StarRatingDisplay rating={product.rating} reviewCount={product.reviewCount} />
+                </div>
                 <p className="text-3xl font-extrabold text-amber-500 mt-2">{formatCurrency(product.price)}</p>
                 <div className="mt-4 prose prose-sm text-gray-600">
                     <p>{product.description}</p>
@@ -87,6 +176,70 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
                                 <span className="text-xs font-medium mt-1 block">{platform.label}</span>
                             </a>
                         ))}
+                    </div>
+                </div>
+
+                 <div className="mt-8 border-t pt-6">
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">Ulasan Pelanggan</h3>
+                    
+                    <div className="bg-gray-50 p-4 rounded-lg mb-6 border">
+                        <h4 className="font-semibold mb-3 text-gray-700">Tulis Ulasan Anda</h4>
+                        <form onSubmit={handleReviewSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-600 mb-1">Rating</label>
+                                <StarRatingInput rating={newRating} setRating={setNewRating} />
+                            </div>
+                             {!currentUser && (
+                                <div>
+                                    <label htmlFor="author" className="block text-sm font-medium text-gray-600">Nama</label>
+                                    <input
+                                        type="text"
+                                        id="author"
+                                        value={newAuthor}
+                                        onChange={(e) => setNewAuthor(e.target.value)}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                                        placeholder="Nama Anda"
+                                        required
+                                    />
+                                </div>
+                            )}
+                            <div>
+                                <label htmlFor="comment" className="block text-sm font-medium text-gray-600">Komentar</label>
+                                <textarea
+                                    id="comment"
+                                    rows={3}
+                                    value={newComment}
+                                    onChange={(e) => setNewComment(e.target.value)}
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                                    placeholder="Bagaimana pendapat Anda tentang produk ini?"
+                                    required
+                                />
+                            </div>
+                            {reviewError && <p className="text-red-500 text-sm">{reviewError}</p>}
+                            <button type="submit" className="w-full bg-orange-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-orange-600 transition-colors">
+                                Kirim Ulasan
+                            </button>
+                        </form>
+                    </div>
+
+                    <div className="space-y-6">
+                        {productReviews.length > 0 ? (
+                            productReviews.map(review => (
+                                <div key={review.id} className="border-b pb-4 last:border-b-0">
+                                    <div className="flex items-center mb-1">
+                                         <Stars rating={review.rating} size="sm" />
+                                         <span className="text-gray-400 mx-2">•</span>
+                                         <p className="font-semibold text-gray-800 text-sm">{review.author}</p>
+                                    </div>
+                                    <p className="text-xs text-gray-400 mb-2">
+                                        {new Date(review.timestamp).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                    </p>
+                                    <p className="text-gray-600 text-sm">{review.comment}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-gray-500 text-sm">Belum ada ulasan untuk produk ini. Jadilah yang pertama!</p>
+                        )}
                     </div>
                 </div>
 

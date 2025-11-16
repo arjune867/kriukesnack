@@ -11,6 +11,7 @@ interface CategoryFormProps {
 const CategoryForm: React.FC<CategoryFormProps> = ({ category, onDone }) => {
     const { addCategory, updateCategory } = useCategories();
     const [name, setName] = useState('');
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (category) {
@@ -20,8 +21,9 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onDone }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
         if (!name.trim()) {
-            alert('Nama kategori tidak boleh kosong.');
+            setError('Nama kategori tidak boleh kosong.');
             return;
         }
 
@@ -48,6 +50,7 @@ const CategoryForm: React.FC<CategoryFormProps> = ({ category, onDone }) => {
                         className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm" 
                         required 
                     />
+                    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
                 </div>
                 <div className="flex items-center justify-end gap-4 pt-4">
                     <button type="button" onClick={onDone} className="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-lg hover:bg-gray-300">

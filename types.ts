@@ -44,4 +44,13 @@ export interface User {
     whatsapp?: string;
 }
 
+export interface Review {
+    id: string;
+    productId: string;
+    author: string;
+    rating: number;
+    comment: string;
+    timestamp: number;
+}
+
 export type Page = 'home' | 'product' | 'admin' | 'cart' | 'wishlist' | 'profile' | 'login' | 'register' | 'forgotPassword' | 'resetPassword';
