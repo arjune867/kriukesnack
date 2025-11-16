@@ -1,0 +1,5 @@
+{
+  "name": "Kriuké Snack onlineshop",
+  "description": "A mobile-friendly PWA e-commerce website for Kriuké Snack banana chips, featuring product management, WhatsApp ordering, and Gemini AI-powered content generation.",
+  "requestFramePermissions": []
+}
