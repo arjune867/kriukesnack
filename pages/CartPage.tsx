@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useCart } from '../hooks/useCart';
 import { Page } from '../types';
@@ -9,15 +8,15 @@ interface CartPageProps {
 }
 
 const CartPage: React.FC<CartPageProps> = ({ navigate }) => {
-    const { cartItems, updateQuantity, removeFromCart, itemCount, clearCart } = useCart();
+    const { cartItems, updateQuantity, removeFromCart, itemCount, clearCart, subtotal, discountAmount, totalPrice, appliedDiscount, applyDiscount, removeDiscount } = useCart();
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
         address: '',
         notes: '',
     });
-
-    const totalPrice = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    const [discountCode, setDiscountCode] = useState('');
+    const [discountMessage, setDiscountMessage] = useState({ type: '', text: '' });
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -32,6 +31,22 @@ const CartPage: React.FC<CartPageProps> = ({ navigate }) => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleApplyDiscount = () => {
+        if (!discountCode.trim()) return;
+        const result = applyDiscount(discountCode);
+        setDiscountMessage({ type: result.success ? 'success' : 'error', text: result.message });
+        if (result.success) {
+            setDiscountCode('');
+        }
+        setTimeout(() => setDiscountMessage({ type: '', text: '' }), 3000);
+    };
+
+    const handleRemoveDiscount = () => {
+        removeDiscount();
+        setDiscountMessage({ type: 'success', text: 'Diskon dihapus.' });
+        setTimeout(() => setDiscountMessage({ type: '', text: '' }), 3000);
+    }
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -44,6 +59,11 @@ const CartPage: React.FC<CartPageProps> = ({ navigate }) => {
             message += `Harga: ${formatCurrency(item.price * item.quantity)}\n\n`;
         });
 
+        message += '-----------------------------------\n';
+        message += `Subtotal: ${formatCurrency(subtotal)}\n`;
+        if (appliedDiscount) {
+            message += `Diskon (${appliedDiscount.code}): -${formatCurrency(discountAmount)}\n`;
+        }
         message += `*Total Pesanan: ${formatCurrency(totalPrice)}*\n`;
         message += '-----------------------------------\n';
         message += '*Data Pengiriman*:\n';
@@ -78,7 +98,7 @@ const CartPage: React.FC<CartPageProps> = ({ navigate }) => {
     }
 
     return (
-        <div className="p-4 pb-32">
+        <div className="p-4 pb-48">
             <h2 className="text-lg font-bold text-gray-800 mb-3">Detail Pesanan</h2>
             <div className="space-y-3 mb-6">
                 {cartItems.map(item => (
@@ -98,6 +118,32 @@ const CartPage: React.FC<CartPageProps> = ({ navigate }) => {
                         </button>
                     </div>
                 ))}
+            </div>
+
+            <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+                 <h2 className="text-lg font-bold text-gray-800 mb-4">Kode Diskon</h2>
+                 {appliedDiscount ? (
+                     <div className="flex justify-between items-center">
+                         <p className="text-green-600 font-semibold">Kode "{appliedDiscount.code}" diterapkan!</p>
+                         <button onClick={handleRemoveDiscount} className="text-sm text-red-500 hover:underline">Hapus</button>
+                     </div>
+                 ) : (
+                    <div className="flex gap-2">
+                        <input 
+                            type="text"
+                            value={discountCode}
+                            onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                            placeholder="Masukkan kode diskon"
+                            className="flex-grow block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                        />
+                        <button onClick={handleApplyDiscount} className="bg-amber-500 text-white font-semibold px-4 rounded-lg shadow hover:bg-amber-600 transition-colors">
+                            Terapkan
+                        </button>
+                    </div>
+                 )}
+                 {discountMessage.text && (
+                    <p className={`text-sm mt-2 ${discountMessage.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>{discountMessage.text}</p>
+                 )}
             </div>
             
             <form id="checkout-form" onSubmit={handleSubmit} className="bg-white p-4 rounded-lg shadow-sm">
@@ -123,9 +169,21 @@ const CartPage: React.FC<CartPageProps> = ({ navigate }) => {
             </form>
 
             <div className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white p-4 border-t border-gray-200 shadow-t-md">
-                <div className="flex justify-between items-center mb-4">
-                    <span className="font-semibold text-gray-700">Total</span>
-                    <span className="font-bold text-xl text-orange-500">{formatCurrency(totalPrice)}</span>
+                <div className="space-y-2 mb-4">
+                    <div className="flex justify-between items-center">
+                        <span className="text-gray-600">Subtotal</span>
+                        <span className="font-medium text-gray-700">{formatCurrency(subtotal)}</span>
+                    </div>
+                     {appliedDiscount && (
+                        <div className="flex justify-between items-center text-green-600">
+                            <span>Diskon ({appliedDiscount.code})</span>
+                            <span>-{formatCurrency(discountAmount)}</span>
+                        </div>
+                    )}
+                    <div className="flex justify-between items-center font-bold text-lg">
+                        <span className="text-gray-800">Total</span>
+                        <span className="text-orange-500">{formatCurrency(totalPrice)}</span>
+                    </div>
                 </div>
                  <button 
                     type="submit"

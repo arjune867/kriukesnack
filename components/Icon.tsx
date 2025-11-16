@@ -1,6 +1,6 @@
 import React from 'react';
 
-type IconName = 'home' | 'user' | 'arrowLeft' | 'share' | 'whatsapp' | 'tiktok' | 'tokopedia' | 'shopee' | 'lazada' | 'edit' | 'trash' | 'plus' | 'sparkles' | 'logout' | 'cart' | 'search' | 'menu' | 'heart' | 'star' | 'microphone' | 'close' | 'eye' | 'eye-slash' | 'copy' | 'twitter' | 'facebook' | 'email' | 'link';
+type IconName = 'home' | 'user' | 'arrowLeft' | 'share' | 'whatsapp' | 'tiktok' | 'tokopedia' | 'shopee' | 'lazada' | 'edit' | 'trash' | 'plus' | 'sparkles' | 'logout' | 'cart' | 'search' | 'menu' | 'heart' | 'star' | 'microphone' | 'close' | 'eye' | 'eye-slash' | 'copy' | 'twitter' | 'facebook' | 'email' | 'link' | 'arrowUp' | 'ticket';
 
 interface IconProps {
     name: IconName;
@@ -28,6 +28,7 @@ export const Icon: React.FC<IconProps> = ({ name, className = 'w-6 h-6', isSolid
         home: <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h7.5" />,
         user: <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />,
         arrowLeft: <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />,
+        arrowUp: <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />,
         share: <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.186 2.25 2.25 0 00-3.933 2.186z" />,
         tiktok: <path d="M16.6 5.82s.51.5 0 0A4.24 4.24 0 0112 3a4.24 4.24 0 01-4.59 4.24H6v5.48a3.63 3.63 0 003.63 3.63h.04A3.63 3.63 0 0013.3 12v-1.48a.2.2 0 01.2-.2h1.6a.2.2 0 01.2.2v4.29a3.63 3.63 0 003.63 3.63h.04A3.63 3.63 0 0022 14.71V9.24a3.42 3.42 0 00-3.42-3.42h-1.98z" />,
         tokopedia: <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z M9.5 16.5l-2-3h4l-2 3zm3-3.5H16l-2-3H8.5l-2 3h3v-1.5z M12 4l-4 6h8l-4-6z" />,
@@ -49,6 +50,7 @@ export const Icon: React.FC<IconProps> = ({ name, className = 'w-6 h-6', isSolid
         copy: <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v8.25A2.25 2.25 0 006 16.5h2.25m8.25-8.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-7.5A2.25 2.25 0 018.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 00-2.25 2.25v6" />,
         email: <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />,
         link: <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />,
+        ticket: <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18m-3 .75h18A2.25 2.25 0 0021 16.5V7.5A2.25 2.25 0 0018.75 5.25H4.5A2.25 2.25 0 002.25 7.5v9A2.25 2.25 0 004.5 18.75h1.5M16.5 18.75h-9" />,
     };
 
     return (

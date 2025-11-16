@@ -1,13 +1,14 @@
-
 import React, { useState } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { usePromotions } from '../hooks/usePromotions';
 import { useCategories } from '../hooks/useCategories';
+import { useDiscounts } from '../hooks/useDiscounts';
 import { useAuth } from '../hooks/useAuth';
 import ProductForm from '../components/ProductForm';
 import PromotionForm from '../components/PromotionForm';
 import CategoryForm from '../components/CategoryForm';
-import { Product, Page, Promotion, Category } from '../types';
+import DiscountForm from '../components/DiscountForm';
+import { Product, Page, Promotion, Category, DiscountCode } from '../types';
 import { Icon } from '../components/Icon';
 
 interface AdminDashboardPageProps {
@@ -18,6 +19,7 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
     const { products, deleteProduct } = useProducts();
     const { promotions, deletePromotion } = usePromotions();
     const { categories, deleteCategory } = useCategories();
+    const { discounts, deleteDiscount } = useDiscounts();
     const { logout } = useAuth();
 
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -28,6 +30,9 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
     
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [isCategoryFormVisible, setIsCategoryFormVisible] = useState(false);
+    
+    const [editingDiscount, setEditingDiscount] = useState<DiscountCode | null>(null);
+    const [isDiscountFormVisible, setIsDiscountFormVisible] = useState(false);
 
     const handleEditProduct = (product: Product) => {
         setEditingProduct(product);
@@ -76,6 +81,22 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
             deleteCategory(categoryId);
         }
     };
+
+    const handleEditDiscount = (discount: DiscountCode) => {
+        setEditingDiscount(discount);
+        setIsDiscountFormVisible(true);
+    };
+
+    const handleAddNewDiscount = () => {
+        setEditingDiscount(null);
+        setIsDiscountFormVisible(true);
+    };
+
+    const handleDeleteDiscount = (discountId: string) => {
+        if (window.confirm('Apakah Anda yakin ingin menghapus kode diskon ini?')) {
+            deleteDiscount(discountId);
+        }
+    };
     
     const handleLogout = () => {
         logout();
@@ -92,6 +113,10 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
 
     if (isCategoryFormVisible) {
         return <CategoryForm category={editingCategory} onDone={() => setIsCategoryFormVisible(false)} />;
+    }
+    
+    if (isDiscountFormVisible) {
+        return <DiscountForm discount={editingDiscount} onDone={() => setIsDiscountFormVisible(false)} />;
     }
 
     return (
@@ -182,6 +207,40 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
                                     <Icon name="edit" />
                                 </button>
                                 <button onClick={() => handleDeletePromotion(promo.id)} className="p-2 text-gray-500 hover:text-red-500">
+                                    <Icon name="trash" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+            
+            {/* Discount Management */}
+            <div>
+                <h2 className="text-xl font-semibold mb-3">Kelola Diskon</h2>
+                 <button
+                    onClick={handleAddNewDiscount}
+                    className="w-full flex justify-center items-center gap-2 bg-teal-500 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-teal-600 transition-all duration-200 mb-4"
+                >
+                    <Icon name="plus" /> Tambah Diskon Baru
+                </button>
+                 <div className="space-y-3">
+                    {discounts.map(d => (
+                        <div key={d.id} className="bg-white p-3 rounded-lg border flex items-center justify-between gap-4">
+                            <div>
+                                <h3 className="font-semibold text-gray-800 flex items-center gap-2">
+                                    <Icon name="ticket" className="w-5 h-5 text-teal-500" />
+                                    {d.code}
+                                </h3>
+                                <p className="text-sm text-gray-500 ml-7">
+                                    {d.type === 'percentage' ? `${d.value}% off` : `Rp ${d.value.toLocaleString('id-ID')} off`}
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button onClick={() => handleEditDiscount(d)} className="p-2 text-gray-500 hover:text-blue-500">
+                                    <Icon name="edit" />
+                                </button>
+                                <button onClick={() => handleDeleteDiscount(d.id)} className="p-2 text-gray-500 hover:text-red-500">
                                     <Icon name="trash" />
                                 </button>
                             </div>

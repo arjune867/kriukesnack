@@ -6,6 +6,7 @@ import { WishlistProvider } from './hooks/useWishlist';
 import { PromotionProvider } from './hooks/usePromotions';
 import { CategoryProvider } from './hooks/useCategories';
 import { ShareProvider } from './hooks/useShare';
+import { DiscountProvider } from './hooks/useDiscounts';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -140,13 +141,15 @@ const App: React.FC = () => {
             <ProductProvider>
                 <PromotionProvider>
                     <CategoryProvider>
-                        <CartProvider>
-                            <WishlistProvider>
-                                <ShareProvider>
-                                    <AppContent />
-                                </ShareProvider>
-                            </WishlistProvider>
-                        </CartProvider>
+                        <DiscountProvider>
+                            <CartProvider>
+                                <WishlistProvider>
+                                    <ShareProvider>
+                                        <AppContent />
+                                    </ShareProvider>
+                                </WishlistProvider>
+                            </CartProvider>
+                        </DiscountProvider>
                     </CategoryProvider>
                 </PromotionProvider>
             </ProductProvider>

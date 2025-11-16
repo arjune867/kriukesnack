@@ -26,6 +26,13 @@ export interface Category {
     name: string;
 }
 
+export interface DiscountCode {
+    id: string;
+    code: string;
+    type: 'percentage' | 'fixed';
+    value: number;
+}
+
 export interface Admin {
     username: string;
 }

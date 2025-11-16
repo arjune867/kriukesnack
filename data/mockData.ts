@@ -1,5 +1,4 @@
-
-import { Product, Promotion, Category } from '../types';
+import { Product, Promotion, Category, DiscountCode } from '../types';
 
 export const MOCK_PRODUCTS: Product[] = [
     {
@@ -121,4 +120,9 @@ export const MOCK_PROMOTIONS: Promotion[] = [
 export const MOCK_CATEGORIES: Category[] = [
     { id: '1', name: 'Keripik Pisang' },
     { id: '2', name: 'Promo Spesial' },
+];
+
+export const MOCK_DISCOUNTS: DiscountCode[] = [
+    { id: '1', code: 'HEMAT10', type: 'percentage', value: 10 },
+    { id: '2', code: 'KRIUKE5K', type: 'fixed', value: 5000 },
 ];
