@@ -9,7 +9,8 @@ export const MOCK_PRODUCTS: Product[] = [
         category: 'Keripik Pisang',
         imageUrl: 'https://picsum.photos/seed/original-kriuke/400/400',
         rating: 4.8,
-        reviewCount: 132,
+        reviewCount: 0,
+        soldCount: 132,
         ecommerceLinks: {
             tiktok: '#',
             tokopedia: '#',
@@ -26,7 +27,8 @@ export const MOCK_PRODUCTS: Product[] = [
         category: 'Promo Spesial',
         imageUrl: 'https://picsum.photos/seed/coklat-kriuke/400/400',
         rating: 4.9,
-        reviewCount: 250,
+        reviewCount: 0,
+        soldCount: 250,
         ecommerceLinks: {
             tiktok: '#',
             tokopedia: '#',
@@ -42,7 +44,8 @@ export const MOCK_PRODUCTS: Product[] = [
         category: 'Keripik Pisang',
         imageUrl: 'https://picsum.photos/seed/balado-kriuke/400/400',
         rating: 4.7,
-        reviewCount: 98,
+        reviewCount: 0,
+        soldCount: 98,
         ecommerceLinks: {
             tiktok: '#',
             tokopedia: '#',
@@ -58,7 +61,8 @@ export const MOCK_PRODUCTS: Product[] = [
         category: 'Keripik Pisang',
         imageUrl: 'https://picsum.photos/seed/pedas-manis-kriuke/400/400',
         rating: 4.6,
-        reviewCount: 115,
+        reviewCount: 0,
+        soldCount: 115,
         ecommerceLinks: {
             tiktok: '#',
             tokopedia: '#',
@@ -74,7 +78,8 @@ export const MOCK_PRODUCTS: Product[] = [
         category: 'Promo Spesial',
         imageUrl: 'https://picsum.photos/seed/jagung-bakar-kriuke/400/400',
         rating: 4.5,
-        reviewCount: 88,
+        reviewCount: 0,
+        soldCount: 88,
         ecommerceLinks: {
             tiktok: '#',
             tokopedia: '#',
@@ -90,7 +95,8 @@ export const MOCK_PRODUCTS: Product[] = [
         category: 'Keripik Pisang',
         imageUrl: 'https://picsum.photos/seed/greentea-kriuke/400/400',
         rating: 4.7,
-        reviewCount: 102,
+        reviewCount: 0,
+        soldCount: 102,
         ecommerceLinks: {
             tiktok: '#',
             tokopedia: '#',

@@ -7,7 +7,7 @@ import { useDiscounts } from './useDiscounts';
 
 interface ProductsContextType {
     products: Product[];
-    addProduct: (product: Omit<Product, 'id' | 'rating' | 'reviewCount'>) => void;
+    addProduct: (product: Omit<Product, 'id' | 'rating' | 'reviewCount' | 'soldCount'>) => void;
     updateProduct: (product: Product) => void;
     deleteProduct: (productId: string) => void;
     getProductById: (productId: string) => Product | undefined;
@@ -46,7 +46,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
             const rating = productReviews.length > 0
                 ? parseFloat((productReviews.reduce((acc, review) => acc + review.rating, 0) / productReviews.length).toFixed(1))
                 : product.rating;
-            const reviewCount = productReviews.length > 0 ? productReviews.length : product.reviewCount;
+            const reviewCount = productReviews.length;
             
             // Calculate discount data
             let discountedPrice: number | undefined = undefined;
@@ -75,11 +75,12 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
         setProducts(newProducts);
     };
 
-    const addProduct = useCallback((productData: Omit<Product, 'id' | 'rating' | 'reviewCount'>) => {
+    const addProduct = useCallback((productData: Omit<Product, 'id' | 'rating' | 'reviewCount' | 'soldCount'>) => {
         const newProduct: Product = {
             id: new Date().getTime().toString(),
             rating: 0, // Initial rating
             reviewCount: 0,
+            soldCount: 0,
             ...productData,
         };
         const updatedProducts = [...products, newProduct];

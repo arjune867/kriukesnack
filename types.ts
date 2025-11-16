@@ -15,6 +15,7 @@ export interface Product {
     };
     discountCodeId?: string; // Link to a discount
     discountedPrice?: number; // Calculated sale price
+    soldCount?: number;
 }
 
 export interface Promotion {

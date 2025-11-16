@@ -11,7 +11,7 @@ interface ProductCardProps {
     onCardClick: () => void;
 }
 
-const StarRating: React.FC<{ rating: number; reviewCount: number }> = ({ rating, reviewCount }) => {
+const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
     return (
         <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
             <div className="flex items-center">
@@ -19,13 +19,12 @@ const StarRating: React.FC<{ rating: number; reviewCount: number }> = ({ rating,
                     <Icon
                         key={i}
                         name="star"
-                        className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-amber-400' : 'text-gray-300'}`}
+                        className={`w-4 h-4 ${i < Math.round(rating) ? 'text-amber-400' : 'text-gray-300'}`}
                         isSolid={true}
                     />
                 ))}
             </div>
             <span className="font-semibold text-gray-700">{rating.toFixed(1)}</span>
-            <span className="text-gray-400">({reviewCount})</span>
         </div>
     );
 };
@@ -88,14 +87,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onCardClick }) => {
                 </button>
             </div>
             <div className="p-2 flex-grow flex flex-col">
-                <h3 className="text-xs font-bold text-gray-800 leading-tight min-h-[40px]">{product.name}</h3>
-                <StarRating rating={product.rating} reviewCount={product.reviewCount} />
-                <p className="text-[10px] text-gray-500 mt-1">{product.category}</p>
+                <h3 className="text-[11px] font-bold text-gray-800 leading-tight min-h-[34px]">{product.name}</h3>
+                <StarRating rating={product.rating} />
+                <p className="text-[10px] text-gray-400">({product.soldCount || 0} terjual)</p>
+                <p className="text-[10px] text-gray-500">{product.category}</p>
                 <div className="flex-grow" />
-                <div className="flex items-baseline gap-2 mt-2">
-                    <p className="text-sm font-bold text-orange-500">{formatCurrency(product.discountedPrice ?? product.price)}</p>
+                <div className="flex items-baseline gap-2 mt-1">
+                    <p className="text-xs font-bold text-orange-500">{formatCurrency(product.discountedPrice ?? product.price)}</p>
                     {product.discountedPrice && (
-                        <p className="text-xs text-gray-400 line-through">{formatCurrency(product.price)}</p>
+                        <p className="text-[10px] text-gray-400 line-through">{formatCurrency(product.price)}</p>
                     )}
                 </div>
                 <div className="flex items-center justify-between mt-2 gap-2">
