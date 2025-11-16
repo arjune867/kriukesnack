@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useCallback } from 'react';
 import { ProductProvider, useProducts } from './hooks/useProducts';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -12,6 +11,11 @@ import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import CartPage from './pages/CartPage';
 import WishlistPage from './pages/WishlistPage';
+import ProfilePage from './pages/ProfilePage';
+import UserLoginPage from './pages/UserLoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import { Page, Product } from './types';
@@ -21,16 +25,27 @@ import { Icon } from './components/Icon';
 const AppContent: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<Page>('home');
     const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
+    const [usernameForReset, setUsernameForReset] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isAssistantVisible, setIsAssistantVisible] = useState(false);
     const { products } = useProducts();
     const { admin } = useAuth();
 
-    const navigate = useCallback((page: Page, productId: string | null = null) => {
+    const navigate = useCallback((page: Page, data: string | null = null) => {
         setCurrentPage(page);
-        setSelectedProductId(productId);
+        if (page === 'product') {
+            setSelectedProductId(data);
+        }
+        if (page !== 'resetPassword') {
+            setUsernameForReset(null);
+        }
         window.scrollTo(0, 0);
     }, []);
+
+    const handleUserFoundForReset = (username: string) => {
+        setUsernameForReset(username);
+        setCurrentPage('resetPassword');
+    };
 
     const selectedProduct = useMemo(() => {
         if (currentPage === 'product' && selectedProductId) {
@@ -50,6 +65,16 @@ const AppContent: React.FC = () => {
                 return <CartPage navigate={navigate} />;
             case 'wishlist':
                 return <WishlistPage navigate={navigate} />;
+            case 'profile':
+                return <ProfilePage navigate={navigate} />;
+            case 'login':
+                return <UserLoginPage navigate={navigate} />;
+            case 'register':
+                return <RegisterPage navigate={navigate} />;
+            case 'forgotPassword':
+                return <ForgotPasswordPage navigate={navigate} onUserFound={handleUserFoundForReset} />;
+            case 'resetPassword':
+                return usernameForReset ? <ResetPasswordPage navigate={navigate} username={usernameForReset} /> : <UserLoginPage navigate={navigate} />;
             case 'home':
             default:
                 return <HomePage navigate={navigate} searchTerm={searchTerm} />;
@@ -60,9 +85,9 @@ const AppContent: React.FC = () => {
         return <AdminLoginPage navigate={navigate} />;
     }
     
-    const mainPaddingTop = (currentPage === 'home' || currentPage === 'wishlist') ? 'pt-32' : 'pt-20';
-    const showFooter = currentPage !== 'admin' && currentPage !== 'cart';
-    const showFab = !isAssistantVisible && currentPage !== 'admin';
+    const mainPaddingTop = (currentPage === 'home' || currentPage === 'wishlist' || currentPage === 'profile') ? 'pt-32' : 'pt-20';
+    const showFooter = !['admin', 'cart', 'login', 'register', 'forgotPassword', 'resetPassword'].includes(currentPage);
+    const showFab = !isAssistantVisible && !['admin', 'login', 'register', 'forgotPassword', 'resetPassword'].includes(currentPage);
 
     return (
         <div className="bg-gray-100 max-w-md mx-auto min-h-screen shadow-2xl flex flex-col font-sans">

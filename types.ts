@@ -1,4 +1,3 @@
-
 export interface Product {
     id: string;
     name: string;
@@ -31,4 +30,9 @@ export interface Admin {
     username: string;
 }
 
-export type Page = 'home' | 'product' | 'admin' | 'cart' | 'wishlist';
+export interface User {
+    username: string;
+    password: string; // In a real app, this would be a hash
+}
+
+export type Page = 'home' | 'product' | 'admin' | 'cart' | 'wishlist' | 'profile' | 'login' | 'register' | 'forgotPassword' | 'resetPassword';

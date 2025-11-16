@@ -3,22 +3,22 @@ import { useAuth } from '../hooks/useAuth';
 import { Page } from '../types';
 import { Icon } from '../components/Icon';
 
-interface AdminLoginPageProps {
+interface UserLoginPageProps {
     navigate: (page: Page) => void;
 }
 
-const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ navigate }) => {
+const UserLoginPage: React.FC<UserLoginPageProps> = ({ navigate }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
-    const { adminLogin } = useAuth();
+    const { login } = useAuth();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        if (adminLogin(username, password)) {
-            navigate('admin');
+        if (login(username, password)) {
+            navigate('profile');
         } else {
             setError('Username atau password salah.');
         }
@@ -27,15 +27,12 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ navigate }) => {
     return (
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
-                <div>
-                    <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Admin Login</h2>
-                </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     <div className="rounded-md shadow-sm">
                         <div>
-                            <label htmlFor="username" className="sr-only">Username</label>
+                            <label htmlFor="username-user" className="sr-only">Username</label>
                             <input
-                                id="username"
+                                id="username-user"
                                 name="username"
                                 type="text"
                                 required
@@ -46,9 +43,9 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ navigate }) => {
                             />
                         </div>
                         <div className="relative">
-                            <label htmlFor="password-admin" className="sr-only">Password</label>
+                            <label htmlFor="password-user" className="sr-only">Password</label>
                             <input
-                                id="password-admin"
+                                id="password-user"
                                 name="password"
                                 type={showPassword ? 'text' : 'password'}
                                 required
@@ -68,23 +65,35 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ navigate }) => {
                         </div>
                     </div>
 
+                    <div className="flex items-center justify-end">
+                        <div className="text-sm">
+                            <button 
+                                type="button"
+                                onClick={() => navigate('forgotPassword')}
+                                className="font-medium text-amber-600 hover:text-amber-500"
+                            >
+                                Lupa Password?
+                            </button>
+                        </div>
+                    </div>
+
                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
                     <div>
                         <button
                             type="submit"
-                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500"
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                         >
-                            Sign in
+                            Masuk
                         </button>
                     </div>
                 </form>
                 <div className="text-center">
                     <button 
-                        onClick={() => navigate('home')}
+                        onClick={() => navigate('register')}
                         className="font-medium text-amber-600 hover:text-amber-500 text-sm"
                     >
-                        Kembali ke Beranda
+                        Belum punya akun? Daftar sekarang
                     </button>
                 </div>
             </div>
@@ -92,4 +101,4 @@ const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ navigate }) => {
     );
 };
 
-export default AdminLoginPage;
+export default UserLoginPage;

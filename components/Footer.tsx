@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Page } from '../types';
 import { Icon } from './Icon';
@@ -13,7 +12,7 @@ const Footer: React.FC<FooterProps> = ({ navigate, currentPage }) => {
         { page: 'home' as Page, label: 'Home', icon: 'home' as const },
         { page: 'wishlist' as Page, label: 'Wishlist', icon: 'heart' as const },
         { page: 'cart' as Page, label: 'Keranjang', icon: 'cart' as const },
-        { page: 'admin' as Page, label: 'Admin', icon: 'user' as const },
+        { page: 'profile' as Page, label: 'Profil', icon: 'user' as const },
     ];
 
     return (
@@ -30,7 +29,7 @@ const Footer: React.FC<FooterProps> = ({ navigate, currentPage }) => {
                                     className={`w-full flex flex-col items-center justify-center gap-1 p-2 ${colorClass} transition-colors duration-200`}
                                     aria-current={isActive ? 'page' : undefined}
                                 >
-                                    <Icon name={item.icon} isSolid={isActive && (item.icon === 'home' || item.icon === 'heart')} />
+                                    <Icon name={item.icon} isSolid={isActive && (item.icon === 'home' || item.icon === 'heart' || item.icon === 'user')} />
                                     <span className="text-xs font-medium">{item.label}</span>
                                 </button>
                             </li>

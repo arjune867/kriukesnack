@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Page } from '../types';
 import { Icon } from './Icon';
@@ -37,13 +36,26 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setS
          );
     }
     
-    if (currentPage === 'product' || currentPage === 'cart') {
+    if (['product', 'cart', 'login', 'register', 'forgotPassword', 'resetPassword'].includes(currentPage)) {
         const titleMap: Record<string, string> = {
             product: productName || 'Detail Produk',
-            cart: 'Keranjang & Checkout'
+            cart: 'Keranjang & Checkout',
+            login: 'Masuk Akun',
+            register: 'Daftar Akun',
+            forgotPassword: 'Lupa Password',
+            resetPassword: 'Reset Password'
         };
         const title = titleMap[currentPage];
-        const backPage = 'home';
+        const backPageMap: Record<string, Page> = {
+            product: 'home',
+            cart: 'home',
+            login: 'profile',
+            register: 'profile',
+            forgotPassword: 'login',
+            resetPassword: 'login'
+        }
+        const backPage = backPageMap[currentPage];
+
 
         return (
              <header className="bg-white shadow-md fixed top-0 left-0 right-0 max-w-md mx-auto z-40 p-4">
@@ -52,9 +64,7 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setS
                         <Icon name="arrowLeft" />
                     </button>
                     <h1 className="text-lg font-semibold text-gray-800">{title}</h1>
-                     {currentPage === 'cart' ? (
-                        <div className="w-10 h-10" /> // Placeholder for alignment
-                     ) : (
+                     {currentPage === 'product' ? (
                         <button onClick={() => navigate('cart')} className="relative">
                             <Icon name="cart" />
                             {itemCount > 0 && (
@@ -63,6 +73,8 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setS
                                 </span>
                             )}
                         </button>
+                     ) : (
+                        <div className="w-10 h-10" /> // Placeholder for alignment
                      )}
                 </div>
             </header>
