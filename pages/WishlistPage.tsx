@@ -35,7 +35,7 @@ const WishlistPage: React.FC<WishlistPageProps> = ({ navigate }) => {
     return (
         <div className="p-4">
             <h1 className="text-2xl font-bold mb-4 text-gray-800">Wishlist Saya</h1>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-3">
                 {wishlistedProducts.map(product => (
                     <ProductCard
                         key={product.id}

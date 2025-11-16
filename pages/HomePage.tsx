@@ -38,13 +38,20 @@ const HomePage: React.FC<HomePageProps> = ({ navigate, searchTerm }) => {
         });
     };
 
-    const displayCategories = useMemo(() => ['All', ...categories.map(c => c.name)], [categories]);
+    const displayCategories = useMemo(() => ['All', 'Diskon', ...categories.map(c => c.name)], [categories]);
 
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
-            const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
             const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-            return matchesCategory && matchesSearch;
+            if (!matchesSearch) return false;
+
+            if (selectedCategory === 'All') {
+                return true;
+            }
+            if (selectedCategory === 'Diskon') {
+                return !!product.discountedPrice;
+            }
+            return product.category === selectedCategory;
         });
     }, [products, selectedCategory, searchTerm]);
 
@@ -70,7 +77,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigate, searchTerm }) => {
 
             <PromotionSlider navigate={navigate} />
 
-            <div className="px-4 pb-4 grid grid-cols-2 gap-4">
+            <div className="px-4 pb-4 grid grid-cols-3 gap-3">
                 {filteredProducts.map((product) => (
                     <ProductCard 
                         key={product.id} 

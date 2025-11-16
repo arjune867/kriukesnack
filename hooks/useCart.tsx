@@ -109,7 +109,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
-    const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    const subtotal = cartItems.reduce((total, item) => {
+        const itemPrice = item.discountedPrice ?? item.price;
+        return total + itemPrice * item.quantity;
+    }, 0);
 
     let discountAmount = 0;
     if (appliedDiscount) {

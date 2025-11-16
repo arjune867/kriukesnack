@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 import { Product } from '../types';
 import { MOCK_PRODUCTS } from '../data/mockData';
 import { useReviews } from './useReviews';
+import { useDiscounts } from './useDiscounts';
 
 interface ProductsContextType {
     products: Product[];
@@ -17,6 +18,7 @@ const ProductsContext = createContext<ProductsContextType | undefined>(undefined
 export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const { reviews } = useReviews();
+    const { discounts } = useDiscounts();
 
     useEffect(() => {
         try {
@@ -33,28 +35,40 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
     }, []);
 
-    const productsWithReviews = useMemo(() => {
+    const productsWithCalculatedFields = useMemo(() => {
         if (!products.length) {
             return [];
         }
 
         return products.map(product => {
+            // Calculate review data
             const productReviews = reviews.filter(r => r.productId === product.id);
-            if (productReviews.length === 0) {
-                // Keep mock rating if there are no real reviews yet
-                return product;
+            const rating = productReviews.length > 0
+                ? parseFloat((productReviews.reduce((acc, review) => acc + review.rating, 0) / productReviews.length).toFixed(1))
+                : product.rating;
+            const reviewCount = productReviews.length > 0 ? productReviews.length : product.reviewCount;
+            
+            // Calculate discount data
+            let discountedPrice: number | undefined = undefined;
+            if (product.discountCodeId) {
+                const discount = discounts.find(d => d.id === product.discountCodeId);
+                if (discount) {
+                    if (discount.type === 'percentage') {
+                        discountedPrice = product.price * (1 - discount.value / 100);
+                    } else { // fixed
+                        discountedPrice = Math.max(0, product.price - discount.value);
+                    }
+                }
             }
 
-            const totalRating = productReviews.reduce((acc, review) => acc + review.rating, 0);
-            const averageRating = totalRating / productReviews.length;
-            
             return {
                 ...product,
-                rating: parseFloat(averageRating.toFixed(1)),
-                reviewCount: productReviews.length,
+                rating,
+                reviewCount,
+                discountedPrice,
             };
         });
-    }, [products, reviews]);
+    }, [products, reviews, discounts]);
 
     const persistProducts = (newProducts: Product[]) => {
         localStorage.setItem('kriuke_products', JSON.stringify(newProducts));
@@ -64,7 +78,7 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     const addProduct = useCallback((productData: Omit<Product, 'id' | 'rating' | 'reviewCount'>) => {
         const newProduct: Product = {
             id: new Date().getTime().toString(),
-            rating: 0,
+            rating: 0, // Initial rating
             reviewCount: 0,
             ...productData,
         };
@@ -83,10 +97,10 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     }, [products]);
     
     const getProductById = useCallback((productId: string) => {
-        return productsWithReviews.find(p => p.id === productId);
-    }, [productsWithReviews]);
+        return productsWithCalculatedFields.find(p => p.id === productId);
+    }, [productsWithCalculatedFields]);
 
-    const value = { products: productsWithReviews, addProduct, updateProduct, deleteProduct, getProductById };
+    const value = { products: productsWithCalculatedFields, addProduct, updateProduct, deleteProduct, getProductById };
 
     return <ProductsContext.Provider value={value}>{children}</ProductsContext.Provider>;
 };

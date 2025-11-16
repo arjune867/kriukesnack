@@ -148,11 +148,11 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
     return (
         <AuthProvider>
-            <ReviewProvider>
-                <ProductProvider>
-                    <PromotionProvider>
-                        <CategoryProvider>
-                            <DiscountProvider>
+            <DiscountProvider>
+                <CategoryProvider>
+                    <ReviewProvider>
+                        <ProductProvider>
+                            <PromotionProvider>
                                 <CartProvider>
                                     <WishlistProvider>
                                         <ShareProvider>
@@ -160,11 +160,11 @@ const App: React.FC = () => {
                                         </ShareProvider>
                                     </WishlistProvider>
                                 </CartProvider>
-                            </DiscountProvider>
-                        </CategoryProvider>
-                    </PromotionProvider>
-                </ProductProvider>
-            </ReviewProvider>
+                            </PromotionProvider>
+                        </ProductProvider>
+                    </ReviewProvider>
+                </CategoryProvider>
+            </DiscountProvider>
         </AuthProvider>
     );
 };

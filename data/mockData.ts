@@ -15,7 +15,8 @@ export const MOCK_PRODUCTS: Product[] = [
             tokopedia: '#',
             shopee: '#',
             lazada: '#',
-        }
+        },
+        discountCodeId: '1', // Linked to HEMAT10 (10% off)
     },
     {
         id: '2',

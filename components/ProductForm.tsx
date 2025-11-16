@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Product } from '../types';
 import { useProducts } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
+import { useDiscounts } from '../hooks/useDiscounts';
 import { generateDescription } from '../services/geminiService';
 import { Icon } from './Icon';
 
@@ -14,12 +15,14 @@ interface ProductFormProps {
 const ProductForm: React.FC<ProductFormProps> = ({ product, onDone }) => {
     const { addProduct, updateProduct } = useProducts();
     const { categories } = useCategories();
+    const { discounts } = useDiscounts();
     const [formData, setFormData] = useState({
         name: '',
         price: '',
         description: '',
         imageUrl: '',
         category: '',
+        discountCodeId: '',
         tiktok: '#',
         tokopedia: '#',
         shopee: '#',
@@ -35,6 +38,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onDone }) => {
                 description: product.description,
                 imageUrl: product.imageUrl,
                 category: product.category,
+                discountCodeId: product.discountCodeId || '',
                 tiktok: product.ecommerceLinks.tiktok,
                 tokopedia: product.ecommerceLinks.tokopedia,
                 shopee: product.ecommerceLinks.shopee,
@@ -69,6 +73,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onDone }) => {
             description: formData.description,
             imageUrl: formData.imageUrl || `https://picsum.photos/seed/${formData.name}/400/400`,
             category: formData.category,
+            discountCodeId: formData.discountCodeId || undefined, // Set to undefined if empty
             ecommerceLinks: {
                 tiktok: formData.tiktok,
                 tokopedia: formData.tokopedia,
@@ -103,6 +108,17 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onDone }) => {
                         {categories.map(cat => (
                             <option key={cat.id} value={cat.name}>
                                 {cat.name}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="discountCodeId" className="block text-sm font-medium text-gray-700">Kode Diskon (Opsional)</label>
+                    <select name="discountCodeId" id="discountCodeId" value={formData.discountCodeId} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm">
+                        <option value="">Tanpa Diskon</option>
+                        {discounts.map(disc => (
+                            <option key={disc.id} value={disc.id}>
+                                {disc.code} ({disc.type === 'percentage' ? `${disc.value}%` : `Rp ${disc.value}`})
                             </option>
                         ))}
                     </select>

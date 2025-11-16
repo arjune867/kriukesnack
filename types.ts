@@ -13,6 +13,8 @@ export interface Product {
         shopee: string;
         lazada: string;
     };
+    discountCodeId?: string; // Link to a discount
+    discountedPrice?: number; // Calculated sale price
 }
 
 export interface Promotion {

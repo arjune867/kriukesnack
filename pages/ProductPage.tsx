@@ -156,7 +156,12 @@ const ProductPage: React.FC<ProductPageProps> = ({ product }) => {
                 <div className="mt-2">
                    <StarRatingDisplay rating={product.rating} reviewCount={product.reviewCount} />
                 </div>
-                <p className="text-3xl font-extrabold text-amber-500 mt-2">{formatCurrency(product.price)}</p>
+                <div className="flex items-baseline gap-3 mt-2">
+                    <p className="text-3xl font-extrabold text-amber-500">{formatCurrency(product.discountedPrice ?? product.price)}</p>
+                    {product.discountedPrice && (
+                         <p className="text-xl font-medium text-gray-400 line-through">{formatCurrency(product.price)}</p>
+                    )}
+                </div>
                 <div className="mt-4 prose prose-sm text-gray-600">
                     <p>{product.description}</p>
                 </div>

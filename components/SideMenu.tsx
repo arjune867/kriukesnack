@@ -20,6 +20,12 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, navigate }) => {
         { page: 'profile' as Page, label: 'Profil', icon: 'user' as const },
     ];
 
+    const socials = [
+        { name: 'Instagram', icon: 'instagram' as const, href: 'https://instagram.com' },
+        { name: 'TikTok', href: 'https://tiktok.com', imageUrl: 'https://i.ibb.co.com/399C2Fwj/social-media.png' },
+        { name: 'Facebook', icon: 'facebook' as const, href: 'https://facebook.com' },
+    ];
+
     const handleLogout = () => {
         logout();
         onClose();
@@ -60,17 +66,38 @@ const SideMenu: React.FC<SideMenuProps> = ({ isOpen, onClose, navigate }) => {
                             ))}
                         </ul>
                     </nav>
-                    {isLoggedIn && (
-                        <div className="mt-auto pt-4 border-t">
-                            <button
+                     <div className="mt-auto pt-4 border-t">
+                        <div className="mb-4">
+                            <p className="px-3 text-xs font-semibold text-gray-400 uppercase mb-3">Ikuti Kami</p>
+                            <div className="flex items-center gap-4 px-3">
+                                {socials.map(social => (
+                                    <a
+                                        key={social.name}
+                                        href={social.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-500 hover:text-orange-500 transition-colors"
+                                        aria-label={`Follow us on ${social.name}`}
+                                    >
+                                        {'imageUrl' in social && social.imageUrl ? (
+                                            <img src={social.imageUrl} alt={social.name} className="w-6 h-6 rounded" />
+                                        ) : (
+                                            <Icon name={social.icon!} className="w-6 h-6" />
+                                        )}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                        {isLoggedIn && (
+                             <button
                                 onClick={handleLogout}
                                 className="w-full flex items-center gap-4 p-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
                             >
                                 <Icon name="logout" className="w-6 h-6" />
                                 <span className="font-semibold">Logout</span>
                             </button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </>
