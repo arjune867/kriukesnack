@@ -487,7 +487,7 @@ const ReportsTab = ({ products }: { products: Product[] }) => {
     }, [products]);
 
     const handleSendReport = () => {
-        const WHATSAPP_NUMBER = '6282349786916';
+        const WHATSAPP_NUMBER = '6283854488111';
         let reportMessage = `*Laporan Kriuké Snack - ${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}*\n\n`;
 
         // Sales Summary
