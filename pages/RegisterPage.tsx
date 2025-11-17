@@ -39,6 +39,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
             setError(result.message);
         }
     };
+    
+    const inputBaseClass = "appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm";
+
 
     return (
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -54,7 +57,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                                 required
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
+                                className={`${inputBaseClass} rounded-t-md`}
                                 placeholder="Username"
                             />
                         </div>
@@ -67,7 +70,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
+                                className={inputBaseClass}
                                 placeholder="Email"
                             />
                         </div>
@@ -80,7 +83,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                                 required
                                 value={whatsapp}
                                 onChange={(e) => setWhatsapp(e.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
+                                className={inputBaseClass}
                                 placeholder="Nomor WhatsApp"
                             />
                         </div>
@@ -93,7 +96,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
+                                className={inputBaseClass}
                                 placeholder="Password"
                             />
                             <button
@@ -114,7 +117,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                                 required
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 focus:z-10 sm:text-sm"
+                                className={`${inputBaseClass} rounded-b-md`}
                                 placeholder="Konfirmasi Password"
                             />
                             <button

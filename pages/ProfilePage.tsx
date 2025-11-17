@@ -24,8 +24,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ navigate }) => {
                 <div className="w-24 h-24 rounded-full bg-orange-500 mx-auto flex items-center justify-center mb-4">
                     <Icon name="user" className="w-12 h-12 text-white" isSolid/>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800">Halo, {user?.username}!</h2>
-                <p className="text-gray-600 mt-1">Selamat datang kembali di Kriuké Snack.</p>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Halo, {user?.username}!</h2>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">Selamat datang kembali di Kriuké Snack.</p>
                 
                 <div className="mt-8 space-y-3">
                     {isUserAdmin && (
@@ -50,11 +50,11 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ navigate }) => {
     const renderLoggedOutState = () => {
         return (
             <div className="text-center">
-                 <div className="w-24 h-24 rounded-full bg-gray-200 mx-auto flex items-center justify-center mb-4">
+                 <div className="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-700 mx-auto flex items-center justify-center mb-4">
                     <Icon name="user" className="w-12 h-12 text-gray-400"/>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800">Akun Saya</h2>
-                <p className="text-gray-600 mt-1">Masuk atau daftar untuk pengalaman belanja yang lebih baik.</p>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Akun Saya</h2>
+                <p className="text-gray-600 dark:text-gray-300 mt-1">Masuk atau daftar untuk pengalaman belanja yang lebih baik.</p>
 
                 <div className="mt-8 space-y-3">
                     <button
@@ -65,13 +65,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ navigate }) => {
                     </button>
                      <button
                         onClick={() => navigate('register')}
-                        className="w-full bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 transition-all duration-200"
+                        className="w-full bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 font-bold py-3 px-4 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-500 transition-all duration-200"
                     >
                         Daftar Akun Baru
                     </button>
                 </div>
 
-                <div className="mt-8 border-t pt-4">
+                <div className="mt-8 border-t dark:border-gray-700 pt-4">
                      <button
                         onClick={() => navigate('admin')}
                         className="font-medium text-amber-600 hover:text-amber-500 text-sm"

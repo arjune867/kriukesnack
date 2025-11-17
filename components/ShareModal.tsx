@@ -32,14 +32,14 @@ const ShareModal: React.FC<ShareModalProps> = ({ product, onClose }) => {
 
     return (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4" onClick={onClose}>
-            <div className="bg-white rounded-2xl w-full max-w-sm p-6 shadow-xl animate-fade-in-up" onClick={e => e.stopPropagation()}>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl w-full max-w-sm p-6 shadow-xl animate-fade-in-up" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-800">Bagikan Produk</h3>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100">Bagikan Produk</h3>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                         <Icon name="close" />
                     </button>
                 </div>
-                <p className="text-sm text-gray-600 mb-6">Bagikan "{product.name}" ke teman-temanmu!</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">Bagikan "{product.name}" ke teman-temanmu!</p>
 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                     {shareOptions.map(option => (
@@ -65,8 +65,8 @@ const ShareModal: React.FC<ShareModalProps> = ({ product, onClose }) => {
                 
                 <div className="mt-6">
                     <div className="relative">
-                        <input type="text" readOnly value={productUrl} className="w-full bg-gray-100 border border-gray-300 rounded-lg pl-3 pr-12 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-400" />
-                        <button onClick={handleCopyLink} className="absolute top-1/2 right-1 -translate-y-1/2 p-2 text-gray-600 hover:text-orange-500">
+                        <input type="text" readOnly value={productUrl} className="w-full bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg pl-3 pr-12 py-2 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+                        <button onClick={handleCopyLink} className="absolute top-1/2 right-1 -translate-y-1/2 p-2 text-gray-600 dark:text-gray-300 hover:text-orange-500">
                             <Icon name="link" className="w-5 h-5" />
                         </button>
                     </div>

@@ -37,18 +37,20 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ navigate, usernam
             setError(result.message);
         }
     };
+    
+    const inputBaseClass = "appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm";
 
     return (
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div>
-                    <h2 className="text-center text-2xl font-bold text-gray-900">Buat Password Baru</h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <h2 className="text-center text-2xl font-bold text-gray-900 dark:text-gray-100">Buat Password Baru</h2>
+                    <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
                         Memperbarui password untuk akun: <span className="font-bold">{username}</span>
                     </p>
                 </div>
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                    <div className="rounded-md shadow-sm">
+                    <div className="rounded-md shadow-sm -space-y-px">
                         <div className="relative">
                             <label htmlFor="password-reset" className="sr-only">Password Baru</label>
                             <input
@@ -58,7 +60,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ navigate, usernam
                                 required
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+                                className={`${inputBaseClass} rounded-t-md`}
                                 placeholder="Password Baru"
                             />
                             <button
@@ -78,7 +80,7 @@ const ResetPasswordPage: React.FC<ResetPasswordPageProps> = ({ navigate, usernam
                                 required
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+                                className={`${inputBaseClass} rounded-b-md`}
                                 placeholder="Konfirmasi Password"
                             />
                              <button

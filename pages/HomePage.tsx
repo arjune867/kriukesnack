@@ -1,14 +1,16 @@
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { useCategories } from '../hooks/useCategories';
 import ProductCard from '../components/ProductCard';
 import PromotionSlider from '../components/PromotionSlider';
 import { Page } from '../types';
-import { Icon } from '../components/Icon';
+import RunningText from '../components/RunningText';
+import QuickActions from '../components/QuickActions';
+import PromoProductCard from '../components/PromoProductCard';
 
 interface HomePageProps {
-    navigate: (page: Page, productId: string) => void;
+    navigate: (page: Page, productId?: string) => void;
     searchTerm: string;
 }
 
@@ -16,27 +18,6 @@ const HomePage: React.FC<HomePageProps> = ({ navigate, searchTerm }) => {
     const { products } = useProducts();
     const { categories } = useCategories();
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [showGoToTop, setShowGoToTop] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 300) {
-                setShowGoToTop(true);
-            } else {
-                setShowGoToTop(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const scrollToTop = () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth',
-        });
-    };
 
     const displayCategories = useMemo(() => ['All', 'Diskon', ...categories.map(c => c.name)], [categories]);
 
@@ -49,14 +30,28 @@ const HomePage: React.FC<HomePageProps> = ({ navigate, searchTerm }) => {
                 return true;
             }
             if (selectedCategory === 'Diskon') {
-                return !!product.discountedPrice;
+                // Fix: A product is considered discounted if it has a discountCodeId.
+                return !!product.discountCodeId;
             }
             return product.category === selectedCategory;
         });
     }, [products, selectedCategory, searchTerm]);
 
+    const promoProducts = useMemo(() => {
+        return products.filter(product => !!product.discountCodeId);
+    }, [products]);
+    
+    const newestProducts = useMemo(() => {
+        const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        return [...products]
+            .filter(p => parseInt(p.id) >= sevenDaysAgo)
+            .sort((a, b) => parseInt(b.id) - parseInt(a.id));
+    }, [products]);
+
     return (
-        <div className="bg-gray-100 min-h-full">
+        <div className="bg-gray-100 dark:bg-gray-900 min-h-full">
+            <QuickActions />
+            <RunningText />
              <div className="p-4">
                  <div className="flex items-center space-x-2 overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                      {displayCategories.map(category => (
@@ -66,7 +61,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigate, searchTerm }) => {
                             className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-colors duration-200 shadow-sm ${
                                 selectedCategory === category 
                                 ? 'bg-orange-500 text-white border border-transparent' 
-                                : 'bg-white text-gray-700 border border-gray-300'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600'
                             }`}
                         >
                             {category}
@@ -83,28 +78,49 @@ const HomePage: React.FC<HomePageProps> = ({ navigate, searchTerm }) => {
                         key={product.id} 
                         product={product} 
                         onCardClick={() => navigate('product', product.id)}
+                        navigate={navigate}
                     />
                 ))}
             </div>
-
-            {showGoToTop && (
-                <button
-                    onClick={scrollToTop}
-                    className="fixed bottom-20 right-4 bg-orange-500 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-orange-600 transition-opacity duration-300 animate-fade-in"
-                    aria-label="Go to top"
-                >
-                    <Icon name="arrowUp" className="w-6 h-6" />
-                </button>
+            
+            {newestProducts.length > 0 && (
+                <div className="mt-4 pb-4">
+                    <div className="flex justify-between items-center px-4 mb-3">
+                        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">Produk Terbaru</h2>
+                        <button 
+                            onClick={() => navigate('newProducts')}
+                            className="text-sm font-semibold text-orange-500 hover:text-orange-600 flex items-center gap-1"
+                        >
+                            Lihat Semua
+                            <i className="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+                    <div className="px-4 space-y-3">
+                        {newestProducts.slice(0, 4).map(product => (
+                            <PromoProductCard
+                                key={`new-${product.id}`}
+                                product={product}
+                                navigate={navigate}
+                            />
+                        ))}
+                    </div>
+                </div>
             )}
-             <style>{`
-                @keyframes fade-in {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.3s ease-out forwards;
-                }
-            `}</style>
+
+            {promoProducts.length > 0 && (
+                <div className="mt-4 pb-4">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 px-4 mb-3">Promo Spesial Hari Ini</h2>
+                    <div className="px-4 space-y-3">
+                        {promoProducts.map(product => (
+                            <PromoProductCard
+                                key={product.id}
+                                product={product}
+                                navigate={navigate}
+                            />
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

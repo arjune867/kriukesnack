@@ -1,16 +1,19 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
-import { Product, DiscountCode } from '../types';
+import { Product, DiscountCode, Variant } from '../types';
 import { useDiscounts } from './useDiscounts';
+import { useProducts } from './useProducts';
 
-export interface CartItem extends Product {
+export interface CartItem {
+    product: Product;
+    variant: Variant;
     quantity: number;
 }
 
 interface CartContextType {
     cartItems: CartItem[];
-    addToCart: (product: Product) => void;
-    removeFromCart: (productId: string) => void;
-    updateQuantity: (productId: string, quantity: number) => void;
+    addToCart: (product: Product, variant: Variant, quantity?: number) => void;
+    removeFromCart: (productId: string, variantId: string) => void;
+    updateQuantity: (productId: string, variantId: string, quantity: number) => void;
     clearCart: () => void;
     itemCount: number;
     subtotal: number;
@@ -27,13 +30,24 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
     const { validateDiscountCode } = useDiscounts();
+    const { getProductById } = useProducts();
 
     useEffect(() => {
         try {
-            const storedCart = localStorage.getItem('kriuke_cart');
+            const storedCart = localStorage.getItem('kriuke_cart_v2'); // Use new key for new structure
             if (storedCart) {
-                setCartItems(JSON.parse(storedCart));
+                const parsedCart = JSON.parse(storedCart);
+                // Data hydration: ensure product data is up-to-date
+                const hydratedCart = parsedCart.map(item => {
+                    const product = getProductById(item.productId);
+                    if (!product) return null;
+                    const variant = product.variants.find(v => v.id === item.variantId);
+                    if (!variant) return null;
+                    return { product, variant, quantity: item.quantity };
+                }).filter(Boolean); // Filter out nulls if product/variant was deleted
+                setCartItems(hydratedCart);
             }
+
             const storedDiscount = localStorage.getItem('kriuke_discount');
             if (storedDiscount) {
                 setAppliedDiscount(JSON.parse(storedDiscount));
@@ -41,10 +55,16 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         } catch (error) {
             console.error("Failed to load cart/discount from localStorage", error);
         }
-    }, []);
+    }, [getProductById]);
 
     const persistCart = (newCart: CartItem[]) => {
-        localStorage.setItem('kriuke_cart', JSON.stringify(newCart));
+        // Store only identifiers to keep localStorage light and allow for data hydration
+        const storableCart = newCart.map(item => ({
+            productId: item.product.id,
+            variantId: item.variant.id,
+            quantity: item.quantity
+        }));
+        localStorage.setItem('kriuke_cart_v2', JSON.stringify(storableCart));
         setCartItems(newCart);
     };
 
@@ -57,36 +77,50 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         setAppliedDiscount(discount);
     }
 
-    const addToCart = useCallback((product: Product) => {
+    const addToCart = useCallback((product: Product, variant: Variant, quantity: number = 1) => {
+        if (variant.stock === 0) return;
         setCartItems(prevItems => {
-            const existingItem = prevItems.find(item => item.id === product.id);
+            const existingItem = prevItems.find(item => item.product.id === product.id && item.variant.id === variant.id);
+            
+            const newQuantity = existingItem ? existingItem.quantity + quantity : quantity;
+            if (newQuantity > variant.stock) {
+                // Optionally: show a notification to the user
+                return prevItems; // Do not add more than available in stock
+            }
+
             let newCart;
             if (existingItem) {
                 newCart = prevItems.map(item =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                    (item.product.id === product.id && item.variant.id === variant.id) ? { ...item, quantity: newQuantity } : item
                 );
             } else {
-                newCart = [...prevItems, { ...product, quantity: 1 }];
+                newCart = [...prevItems, { product, variant, quantity }];
             }
             persistCart(newCart);
             return newCart;
         });
     }, []);
 
-    const updateQuantity = useCallback((productId: string, quantity: number) => {
+    const updateQuantity = useCallback((productId: string, variantId: string, quantity: number) => {
+        const itemInCart = cartItems.find(item => item.product.id === productId && item.variant.id === variantId);
+        if (!itemInCart) return;
+
+        // Cap quantity at available stock
+        const effectiveQuantity = Math.min(quantity, itemInCart.variant.stock);
+
         let updatedCart;
-        if (quantity <= 0) {
-            updatedCart = cartItems.filter(item => item.id !== productId);
+        if (effectiveQuantity <= 0) {
+            updatedCart = cartItems.filter(item => !(item.product.id === productId && item.variant.id === variantId));
         } else {
             updatedCart = cartItems.map(item =>
-                item.id === productId ? { ...item, quantity } : item
+                (item.product.id === productId && item.variant.id === variantId) ? { ...item, quantity: effectiveQuantity } : item
             );
         }
         persistCart(updatedCart);
     }, [cartItems]);
 
-    const removeFromCart = useCallback((productId: string) => {
-        const updatedCart = cartItems.filter(item => item.id !== productId);
+    const removeFromCart = useCallback((productId: string, variantId: string) => {
+        const updatedCart = cartItems.filter(item => !(item.product.id === productId && item.variant.id === variantId));
         persistCart(updatedCart);
     }, [cartItems]);
 
@@ -108,9 +142,18 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         persistDiscount(null);
     };
 
-    const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
     const subtotal = cartItems.reduce((total, item) => {
-        const itemPrice = item.discountedPrice ?? item.price;
+        let itemPrice = item.variant.price;
+        if (item.product.discountCodeId) {
+            const discount = validateDiscountCode(item.product.discountCodeId);
+            if (discount) {
+                if (discount.type === 'percentage') {
+                    itemPrice = itemPrice * (1 - discount.value / 100);
+                } else {
+                    itemPrice = Math.max(0, itemPrice - discount.value);
+                }
+            }
+        }
         return total + itemPrice * item.quantity;
     }, 0);
 
@@ -124,6 +167,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
     
     const totalPrice = Math.max(0, subtotal - discountAmount);
+    const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
     const value = { cartItems, addToCart, removeFromCart, updateQuantity, clearCart, itemCount, subtotal, discountAmount, totalPrice, appliedDiscount, applyDiscount, removeDiscount };
 

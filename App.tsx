@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { ProductProvider, useProducts } from './hooks/useProducts';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -8,6 +9,10 @@ import { CategoryProvider } from './hooks/useCategories';
 import { ShareProvider } from './hooks/useShare';
 import { DiscountProvider } from './hooks/useDiscounts';
 import { ReviewProvider } from './hooks/useReviews';
+import { ThemeProvider } from './hooks/useTheme';
+import { SettingsProvider } from './hooks/useSettings';
+import { QuickActionsProvider } from './hooks/useQuickActions';
+import { WhatsAppChatProvider } from './hooks/useWhatsAppChat';
 import HomePage from './pages/HomePage';
 import ProductPage from './pages/ProductPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -15,15 +20,15 @@ import AdminDashboardPage from './pages/AdminDashboardPage';
 import CartPage from './pages/CartPage';
 import WishlistPage from './pages/WishlistPage';
 import ProfilePage from './pages/ProfilePage';
+import PromotionPage from './pages/PromotionPage';
 import UserLoginPage from './pages/UserLoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import NewProductsPage from './pages/NewProductsPage';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import { Page, Product } from './types';
-import VirtualAssistant from './components/VirtualAssistant';
-import { Icon } from './components/Icon';
 import SideMenu from './components/SideMenu';
 
 const AppContent: React.FC = () => {
@@ -31,7 +36,6 @@ const AppContent: React.FC = () => {
     const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
     const [usernameForReset, setUsernameForReset] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
-    const [isAssistantVisible, setIsAssistantVisible] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { products } = useProducts();
     const { admin } = useAuth();
@@ -84,6 +88,8 @@ const AppContent: React.FC = () => {
                 return <WishlistPage navigate={navigate} />;
             case 'profile':
                 return <ProfilePage navigate={navigate} />;
+            case 'promo':
+                return <PromotionPage navigate={navigate} />;
             case 'login':
                 return <UserLoginPage navigate={navigate} />;
             case 'register':
@@ -92,6 +98,8 @@ const AppContent: React.FC = () => {
                 return <ForgotPasswordPage navigate={navigate} onUserFound={handleUserFoundForReset} />;
             case 'resetPassword':
                 return usernameForReset ? <ResetPasswordPage navigate={navigate} username={usernameForReset} /> : <UserLoginPage navigate={navigate} />;
+            case 'newProducts':
+                return <NewProductsPage navigate={navigate} />;
             case 'home':
             default:
                 return <HomePage navigate={navigate} searchTerm={searchTerm} />;
@@ -102,12 +110,11 @@ const AppContent: React.FC = () => {
         return <AdminLoginPage navigate={navigate} />;
     }
     
-    const mainPaddingTop = (currentPage === 'home' || currentPage === 'wishlist' || currentPage === 'profile') ? 'pt-32' : 'pt-20';
-    const showFooter = !['admin', 'cart', 'login', 'register', 'forgotPassword', 'resetPassword'].includes(currentPage);
-    const showFab = !isAssistantVisible && !['admin', 'login', 'register', 'forgotPassword', 'resetPassword'].includes(currentPage);
+    const mainPaddingTop = 'pt-20';
+    const showFooter = !['admin', 'product', 'cart', 'login', 'register', 'forgotPassword', 'resetPassword', 'newProducts'].includes(currentPage);
 
     return (
-        <div className="bg-gray-100 max-w-md mx-auto min-h-screen shadow-2xl flex flex-col font-sans">
+        <div className="bg-gray-100 dark:bg-gray-900 max-w-md mx-auto min-h-screen shadow-2xl flex flex-col font-sans">
             <Header 
                 navigate={navigate} 
                 currentPage={currentPage}
@@ -124,21 +131,6 @@ const AppContent: React.FC = () => {
             <main className={`flex-grow ${mainPaddingTop} ${showFooter ? 'pb-16' : 'pb-4'}`}>
                 {renderPage()}
             </main>
-
-            {showFab && (
-                <button
-                    onClick={() => setIsAssistantVisible(true)}
-                    className="fixed bottom-20 right-4 bg-orange-500 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-50 hover:bg-orange-600 transition-transform active:scale-90"
-                    aria-label="Open virtual assistant"
-                >
-                    <Icon name="microphone" className="w-7 h-7" />
-                </button>
-            )}
-
-            <VirtualAssistant 
-                isOpen={isAssistantVisible} 
-                onClose={() => setIsAssistantVisible(false)} 
-            />
             
             {showFooter && <Footer navigate={navigate} currentPage={currentPage} />}
         </div>
@@ -147,25 +139,33 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => {
     return (
-        <AuthProvider>
-            <DiscountProvider>
-                <CategoryProvider>
-                    <ReviewProvider>
-                        <ProductProvider>
-                            <PromotionProvider>
-                                <CartProvider>
-                                    <WishlistProvider>
-                                        <ShareProvider>
-                                            <AppContent />
-                                        </ShareProvider>
-                                    </WishlistProvider>
-                                </CartProvider>
-                            </PromotionProvider>
-                        </ProductProvider>
-                    </ReviewProvider>
-                </CategoryProvider>
-            </DiscountProvider>
-        </AuthProvider>
+        <ThemeProvider>
+            <AuthProvider>
+                <SettingsProvider>
+                    <DiscountProvider>
+                        <CategoryProvider>
+                            <QuickActionsProvider>
+                                <ReviewProvider>
+                                    <ProductProvider>
+                                        <PromotionProvider>
+                                            <CartProvider>
+                                                <WishlistProvider>
+                                                    <ShareProvider>
+                                                        <WhatsAppChatProvider>
+                                                            <AppContent />
+                                                        </WhatsAppChatProvider>
+                                                    </ShareProvider>
+                                                </WishlistProvider>
+                                            </CartProvider>
+                                        </PromotionProvider>
+                                    </ProductProvider>
+                                </ReviewProvider>
+                            </QuickActionsProvider>
+                        </CategoryProvider>
+                    </DiscountProvider>
+                </SettingsProvider>
+            </AuthProvider>
+        </ThemeProvider>
     );
 };
 

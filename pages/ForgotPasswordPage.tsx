@@ -35,8 +35,8 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ navigate, onUse
         <div className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md w-full space-y-8">
                 <div>
-                    <h2 className="text-center text-2xl font-bold text-gray-900">Lupa Password Anda?</h2>
-                    <p className="mt-2 text-center text-sm text-gray-600">
+                    <h2 className="text-center text-2xl font-bold text-gray-900 dark:text-gray-100">Lupa Password Anda?</h2>
+                    <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
                         Masukkan username Anda dan kami akan (simulasikan) mengirimkan link untuk reset password.
                     </p>
                 </div>
@@ -51,7 +51,7 @@ const ForgotPasswordPage: React.FC<ForgotPasswordPageProps> = ({ navigate, onUse
                                 required
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
-                                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
+                                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
                                 placeholder="Username"
                             />
                         </div>

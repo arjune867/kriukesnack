@@ -18,7 +18,6 @@ const ProductsContext = createContext<ProductsContextType | undefined>(undefined
 export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const { reviews } = useReviews();
-    const { discounts } = useDiscounts();
 
     useEffect(() => {
         try {
@@ -48,27 +47,13 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
                 : product.rating;
             const reviewCount = productReviews.length;
             
-            // Calculate discount data
-            let discountedPrice: number | undefined = undefined;
-            if (product.discountCodeId) {
-                const discount = discounts.find(d => d.id === product.discountCodeId);
-                if (discount) {
-                    if (discount.type === 'percentage') {
-                        discountedPrice = product.price * (1 - discount.value / 100);
-                    } else { // fixed
-                        discountedPrice = Math.max(0, product.price - discount.value);
-                    }
-                }
-            }
-
             return {
                 ...product,
                 rating,
                 reviewCount,
-                discountedPrice,
             };
         });
-    }, [products, reviews, discounts]);
+    }, [products, reviews]);
 
     const persistProducts = (newProducts: Product[]) => {
         localStorage.setItem('kriuke_products', JSON.stringify(newProducts));

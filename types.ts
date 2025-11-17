@@ -1,10 +1,19 @@
+export type IconName = 'home' | 'user' | 'arrowLeft' | 'share' | 'whatsapp' | 'tiktok' | 'tokopedia' | 'shopee' | 'lazada' | 'edit' | 'trash' | 'plus' | 'sparkles' | 'logout' | 'cart' | 'search' | 'menu' | 'heart' | 'star' | 'close' | 'eye' | 'eye-slash' | 'copy' | 'twitter' | 'facebook' | 'email' | 'link' | 'arrowUp' | 'ticket' | 'instagram' | 'phone' | 'mapPin' | 'pencil' | 'grid';
+
+export interface Variant {
+    id: string;
+    name: string; // e.g., "100g", "250g"
+    price: number;
+    stock: number;
+}
+
 export interface Product {
     id: string;
     name: string;
-    price: number;
     description: string;
     imageUrl: string;
     category: string;
+    variants: Variant[];
     rating: number;
     reviewCount: number;
     ecommerceLinks: {
@@ -14,18 +23,18 @@ export interface Product {
         lazada: string;
     };
     discountCodeId?: string; // Link to a discount
-    discountedPrice?: number; // Calculated sale price
     soldCount?: number;
 }
 
 export interface Promotion {
     id: string;
+    title: string;
     imageUrl: string;
     productId: string; // ID of the product it links to
 }
 
 export interface Category {
-    id: string;
+    id:string;
     name: string;
 }
 
@@ -56,4 +65,12 @@ export interface Review {
     timestamp: number;
 }
 
-export type Page = 'home' | 'product' | 'admin' | 'cart' | 'wishlist' | 'profile' | 'login' | 'register' | 'forgotPassword' | 'resetPassword';
+export interface QuickAction {
+    id: string;
+    name: string;
+    icon: IconName;
+    color: string; // Tailwind classes like "bg-red-100 dark:bg-red-500/20 text-red-500 dark:text-red-400"
+    link?: string;
+}
+
+export type Page = 'home' | 'product' | 'admin' | 'cart' | 'wishlist' | 'profile' | 'login' | 'register' | 'forgotPassword' | 'resetPassword' | 'promo' | 'newProducts';
