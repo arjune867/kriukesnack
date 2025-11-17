@@ -486,6 +486,46 @@ const ReportsTab = ({ products }: { products: Product[] }) => {
             .slice(0, 5);
     }, [products]);
 
+    const handleSendReport = () => {
+        const WHATSAPP_NUMBER = '6282349786916';
+        let reportMessage = `*Laporan Kriuké Snack - ${new Date().toLocaleDateString('id-ID', { dateStyle: 'full' })}*\n\n`;
+
+        // Sales Summary
+        reportMessage += `*📊 Ringkasan Penjualan*\n`;
+        reportMessage += `- Total Produk Terjual: ${salesSummary.totalSoldCount.toLocaleString('id-ID')} unit\n`;
+        reportMessage += `- Estimasi Pendapatan: ${formatCurrency(salesSummary.estimatedRevenue)}\n\n`;
+
+        // Stock Summary
+        reportMessage += `*📦 Ringkasan Stok*\n`;
+        reportMessage += `- Total Item di Stok: ${stockSummary.totalItems.toLocaleString('id-ID')}\n`;
+        reportMessage += `- Produk Tersedia: ${stockSummary.inStockCount}\n`;
+        reportMessage += `- Produk Stok Terbatas: ${stockSummary.lowStockCount}\n`;
+        reportMessage += `- Produk Habis: ${stockSummary.outOfStockCount}\n\n`;
+
+        // Best Sellers
+        reportMessage += `*⭐ Produk Terlaris*\n`;
+        bestSellers.forEach((p, index) => {
+            reportMessage += `${index + 1}. ${p.name} (*${p.soldCount || 0} terjual*)\n`;
+        });
+        reportMessage += `\n`;
+
+        // Detailed Stock
+        reportMessage += `*📋 Detail Stok Produk*\n`;
+        products.forEach(p => {
+            const totalStock = p.variants.reduce((sum, v) => sum + v.stock, 0);
+            let statusEmoji = '🟢'; // Available
+            if (totalStock === 0) {
+                statusEmoji = '🔴'; // Out of Stock
+            } else if (totalStock <= 10) {
+                statusEmoji = '🟠'; // Low Stock
+            }
+            reportMessage += `${statusEmoji} ${p.name} - Stok: *${totalStock}*\n`;
+        });
+
+        const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(reportMessage)}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
     const SummaryCard = ({ title, value, colorClass }) => (
         <div className={`bg-white dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-700 ${colorClass}`}>
             <p className="text-sm font-medium">{title}</p>
@@ -495,8 +535,18 @@ const ReportsTab = ({ products }: { products: Product[] }) => {
     
     return (
         <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold dark:text-gray-100">Laporan</h2>
+                <button
+                    onClick={handleSendReport}
+                    className="bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-colors flex items-center gap-2 text-sm"
+                >
+                    <Icon name="whatsapp" className="w-4 h-4" />
+                    Kirim Laporan ke WhatsApp
+                </button>
+            </div>
             <div>
-                <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Ringkasan Penjualan</h2>
+                <h3 className="text-lg font-semibold mb-3 dark:text-gray-100">Ringkasan Penjualan</h3>
                 <div className="grid grid-cols-2 gap-4">
                      <SummaryCard 
                         title="Total Produk Terjual" 
@@ -512,7 +562,7 @@ const ReportsTab = ({ products }: { products: Product[] }) => {
             </div>
 
             <div>
-                <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Ringkasan Stok</h2>
+                <h3 className="text-lg font-semibold mb-3 dark:text-gray-100">Ringkasan Stok</h3>
                 <div className="grid grid-cols-2 gap-4">
                     <SummaryCard 
                         title="Total Item di Stok" 
@@ -528,7 +578,7 @@ const ReportsTab = ({ products }: { products: Product[] }) => {
             </div>
 
             <div>
-                <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Produk Terlaris</h2>
+                <h3 className="text-lg font-semibold mb-3 dark:text-gray-100">Produk Terlaris</h3>
                 <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border dark:border-gray-700 space-y-2">
                     {bestSellers.map((p, index) => (
                         <div key={p.id} className="flex items-center gap-4 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700/50">
@@ -542,7 +592,7 @@ const ReportsTab = ({ products }: { products: Product[] }) => {
             </div>
 
             <div>
-                <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Detail Stok Produk</h2>
+                <h3 className="text-lg font-semibold mb-3 dark:text-gray-100">Detail Stok Produk</h3>
                 <div className="space-y-3">
                     {products.map(product => {
                         const totalStock = product.variants.reduce((sum, v) => sum + v.stock, 0);
