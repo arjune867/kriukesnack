@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode, useCa
 
 export interface Settings {
     marqueeText: string;
+    tiktokLiveUrl: string;
 }
 
 interface SettingsContextType {
@@ -13,6 +14,7 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 const DEFAULT_SETTINGS: Settings = {
     marqueeText: '🔥 Hot Promo! Cek diskon spesial kami hari ini! Diskon hingga 50% untuk produk tertentu! 🔥',
+    tiktokLiveUrl: 'https://www.tiktok.com/@kriukesnack.id/live',
 };
 
 export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

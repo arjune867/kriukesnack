@@ -52,10 +52,14 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
 
     const [marqueeText, setMarqueeText] = useState('');
     const [showMarqueeSaveSuccess, setShowMarqueeSaveSuccess] = useState(false);
+    const [tiktokLiveUrl, setTiktokLiveUrl] = useState('');
+    const [showTiktokSaveSuccess, setShowTiktokSaveSuccess] = useState(false);
+
 
     useEffect(() => {
         if (settings) {
             setMarqueeText(settings.marqueeText);
+            setTiktokLiveUrl(settings.tiktokLiveUrl);
         }
     }, [settings]);
 
@@ -80,6 +84,12 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
         updateSettings({ marqueeText });
         setShowMarqueeSaveSuccess(true);
         setTimeout(() => setShowMarqueeSaveSuccess(false), 2000);
+    };
+    
+    const handleTiktokUrlSave = () => {
+        updateSettings({ tiktokLiveUrl });
+        setShowTiktokSaveSuccess(true);
+        setTimeout(() => setShowTiktokSaveSuccess(false), 2000);
     };
 
     const handleEditProduct = (product: Product) => {
@@ -199,28 +209,56 @@ const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ navigate }) => 
                 </button>
             </div>
 
-            {/* Marquee Text Management */}
-            <div>
-                <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Teks Promo Berjalan</h2>
-                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-700">
-                    <textarea
-                        id="marqueeText"
-                        rows={2}
-                        value={marqueeText}
-                        onChange={(e) => setMarqueeText(e.target.value)}
-                        className="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
-                        placeholder="Masukkan teks promo yang akan berjalan..."
-                    />
-                    <div className="flex justify-end items-center mt-3">
-                         {showMarqueeSaveSuccess && (
-                            <span className="text-sm text-green-500 mr-4">Tersimpan!</span>
-                        )}
-                        <button
-                            onClick={handleMarqueeTextSave}
-                            className="bg-green-500 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-colors"
-                        >
-                            Simpan
-                        </button>
+            {/* Settings Management Section */}
+            <div className="space-y-4">
+                <div>
+                    <h2 className="text-xl font-semibold mb-3 dark:text-gray-100">Pengaturan</h2>
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-700 space-y-4">
+                        <div>
+                             <label htmlFor="marqueeText" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Teks Promo Berjalan</label>
+                            <textarea
+                                id="marqueeText"
+                                rows={2}
+                                value={marqueeText}
+                                onChange={(e) => setMarqueeText(e.target.value)}
+                                className="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                                placeholder="Masukkan teks promo yang akan berjalan..."
+                            />
+                            <div className="flex justify-end items-center mt-2">
+                                {showMarqueeSaveSuccess && (
+                                    <span className="text-sm text-green-500 mr-4">Tersimpan!</span>
+                                )}
+                                <button
+                                    onClick={handleMarqueeTextSave}
+                                    className="bg-green-500 text-white font-bold py-1.5 px-4 rounded-lg shadow-md hover:bg-green-600 transition-colors"
+                                >
+                                    Simpan
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="border-t dark:border-gray-700 pt-4">
+                            <label htmlFor="tiktokLiveUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Link Live Streaming TikTok</label>
+                            <input
+                                id="tiktokLiveUrl"
+                                type="url"
+                                value={tiktokLiveUrl}
+                                onChange={(e) => setTiktokLiveUrl(e.target.value)}
+                                className="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                                placeholder="https://www.tiktok.com/@username/live"
+                            />
+                            <div className="flex justify-end items-center mt-2">
+                                {showTiktokSaveSuccess && (
+                                    <span className="text-sm text-green-500 mr-4">Tersimpan!</span>
+                                )}
+                                <button
+                                    onClick={handleTiktokUrlSave}
+                                    className="bg-green-500 text-white font-bold py-1.5 px-4 rounded-lg shadow-md hover:bg-green-600 transition-colors"
+                                >
+                                    Simpan
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

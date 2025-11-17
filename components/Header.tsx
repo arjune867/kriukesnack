@@ -1,9 +1,11 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Page } from '../types';
 import { Icon } from './Icon';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
+import { useSettings } from '../hooks/useSettings';
 
 interface HeaderProps {
     navigate: (page: Page, productId?: string) => void;
@@ -24,6 +26,7 @@ const Logo: React.FC = () => (
 const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setSearchTerm, productName, onMenuClick }) => {
     const { itemCount } = useCart();
     const { admin } = useAuth();
+    const { settings } = useSettings();
     const [isSearching, setIsSearching] = useState(false);
     const searchInputRef = useRef<HTMLInputElement>(null);
 
@@ -135,14 +138,9 @@ const Header: React.FC<HeaderProps> = ({ navigate, currentPage, searchTerm, setS
                          <button onClick={handleSearchClick} className="text-gray-700 dark:text-gray-200">
                              <Icon name="search" />
                          </button>
-                         <button onClick={() => navigate('cart')} className="relative">
-                            <Icon name="cart" />
-                            {itemCount > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                    {itemCount}
-                                </span>
-                            )}
-                        </button>
+                         <a href={settings.tiktokLiveUrl || 'https://www.tiktok.com/@kriukesnack.id/live'} target="_blank" rel="noopener noreferrer" aria-label="Tonton TikTok Live" className="flex items-center">
+                            <img src="https://i.ibb.co/zWVKXBk6/Pngtree-tiktok-live-icon-sign-vector-8240242.png" alt="TikTok Live" className="h-7" />
+                         </a>
                         <button onClick={onMenuClick}>
                             <Icon name="menu" />
                         </button>
